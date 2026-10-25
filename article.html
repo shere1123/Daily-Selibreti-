@@ -231,6 +231,65 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
   <div class="copyright">© <span id="year"></span> डेली सेलिब्रेटी — सर्वाधिकार सुरक्षित।</div>
 </footer>
 
+<script>
+const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80';
+document.getElementById('year').textContent = new Date().getFullYear();
+function safe(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
+
+function updateRealTimeDate() {
+  try {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'long' };
+    const dateStr = now.toLocaleDateString('ne-NP', options);
+    const timeStr = now.toLocaleTimeString('ne-NP');
+    const dateEl = document.getElementById('liveDate');
+    if(dateEl) {
+      dateEl.textContent = `${dateStr} | ${timeStr}`;
+    }
+  } catch(e) {
+    const dateEl = document.getElementById('liveDate');
+    if(dateEl) dateEl.textContent = 'कार्तिक ८, २०८३';
+  }
+}
+setInterval(updateRealTimeDate, 1000);
+updateRealTimeDate();
+
+function showNotFound() {
+  document.getElementById('articleContainer').innerHTML = `
+    <div style="text-align:center;padding:40px;">
+      <h2 style="color:var(--red);">माफ गर्नुहोला, समाचार भेटिएन।</h2>
+      <a href="index.html" style="display:inline-block;margin-top:15px;background:var(--red);color:#fff;padding:8px 16px;border-radius:4px;text-decoration:none;font-weight:700;">मुख्य पृष्ठमा जानुहोस्</a>
+    </div>
+  `;
+}
+
+// URL बाट ID लिने
+const urlParams = new URLSearchParams(window.location.search);
+const articleId = urlParams.get('id');
+
+let n = null;
+window.news = [];
+
+// १. तुरुन्तै LocalStorage बाट क्यास गरिएको समाचार खोजेर देखाउने (Instant Load)
+try {
+  const cached = localStorage.getItem('cachedNewsList');
+  if (cached) {
+    const parsed = JSON.parse(cached);
+    if (Array.isArray(parsed)) {
+      window.news = parsed.filter(item => item.id !== articleId);
+      const found = parsed.find(item => item.id === articleId);
+      if (found) {
+        n = found;
+        renderArticle(n);
+        renderRelatedNews();
+      }
+    }
+  }
+} catch(e) {}
+</script>
+
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -255,9 +314,6 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
 
-  let n = null;
-  window.news = [];
-
   async function initArticlePage() {
     if (!articleId) {
       showNotFound();
@@ -265,6 +321,8 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
     }
 
     try {
+      await loadAdsFromFirebase();
+
       const docRef = window.fsMethods.doc(window.firebaseDb, "news", articleId);
       const docSnap = await window.fsMethods.getDoc(docRef);
 
@@ -272,19 +330,21 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
         n = docSnap.data();
         n.id = docSnap.id;
 
+        // भ्युज बढाउने
         await window.fsMethods.updateDoc(docRef, {
           views: window.fsMethods.increment(1)
         });
         n.views = (n.views || 0) + 1;
 
-        await loadAdsFromFirebase();
         renderArticle(n);
         await loadRelatedNews(articleId);
-      } else {
+      } else if (!n) {
         showNotFound();
       }
     } catch (error) {
-      showNotFound();
+      if (!n) {
+        showNotFound();
+      }
     }
   }
 
@@ -296,47 +356,29 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
         const ads = docSnap.data();
         if(ads.ad300) {
           window.globalAd300 = ads.ad300;
+          if (n) renderArticle(n); // एड लोड भएपछि रिफ्रेस गर्ने
         }
       }
     } catch (error) {}
   }
 
-  function updateRealTimeDate() {
-    const now = new Date();
-    const options = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'long' };
-    const dateStr = now.toLocaleDateString('ne-NP', options);
-    const timeStr = now.toLocaleTimeString('ne-NP');
-    const dateEl = document.getElementById('liveDate');
-    if(dateEl) {
-      dateEl.textContent = `${dateStr} | ${timeStr}`;
-    }
-  }
-  setInterval(updateRealTimeDate, 1000);
-  updateRealTimeDate();
-
   async function loadRelatedNews(currentId) {
     try {
+      const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
       let rawNews = [];
-      const cached = localStorage.getItem('cachedNewsList');
-      if (cached) {
-        try {
-          const parsed = JSON.parse(cached);
-          if (Array.isArray(parsed) && parsed.length > 0) {
-            rawNews = parsed.filter(item => item.id !== currentId);
-          }
-        } catch(err) {}
-      }
+      let fullList = [];
+      
+      querySnapshot.forEach((docSnap) => {
+        let item = docSnap.data();
+        item.id = docSnap.id;
+        fullList.push(item);
+        if (docSnap.id !== currentId) {
+          rawNews.push(item);
+        }
+      });
 
-      if (rawNews.length === 0) {
-        const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
-        querySnapshot.forEach((docSnap) => {
-          let item = docSnap.data();
-          item.id = docSnap.id;
-          if (docSnap.id !== currentId) {
-            rawNews.push(item);
-          }
-        });
-      }
+      // लोकलस्टोरेज अपडेट गर्ने
+      localStorage.setItem('cachedNewsList', JSON.stringify(fullList));
 
       window.news = rawNews;
       renderRelatedNews();
@@ -391,22 +433,8 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
 </script>
 
 <script>
-const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80';
-document.getElementById('year').textContent = new Date().getFullYear();
-function safe(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
-
-function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
-
-function showNotFound() {
-  document.getElementById('articleContainer').innerHTML = `
-    <div style="text-align:center;padding:40px;">
-      <h2 style="color:var(--red);">माफ गर्नुहोला, समाचार भेटिएन।</h2>
-      <a href="index.html" style="display:inline-block;margin-top:15px;background:var(--red);color:#fff;padding:8px 16px;border-radius:4px;text-decoration:none;font-weight:700;">मुख्य पृष्ठमा जानुहोस्</a>
-    </div>
-  `;
-}
-
 function renderArticle(n) {
+  if(!n) return;
   document.getElementById('pageTitle').textContent = n.title + ' | डेली सेलिब्रेटी';
   
   const articleThumb = n.image || placeholderImg;
@@ -493,7 +521,7 @@ function renderArticle(n) {
 function renderRelatedNews() {
   const container = document.getElementById('relatedNewsGrid');
   if(!window.news || !window.news.length) {
-    container.innerHTML = '<p style="text-align:center;color:#777;padding:20px;">अन्य समाचारहरू उपलब्ध छैनन्।</p>';
+    container.innerHTML = '';
     return;
   }
 
@@ -509,14 +537,7 @@ function renderRelatedNews() {
   let finalHTML = '';
   
   window.news.forEach((item, i) => {
-    let isCompact = false;
-    let mod = i % 5;
-    
-    if (mod >= 2) {
-      isCompact = true;  
-    } else {
-      isCompact = false; 
-    }
+    let isCompact = (i % 5 >= 2);
 
     if (!isCompact) {
       finalHTML += `<article class="news-card" onclick="location.href='article.html?id=${item.id}'">
