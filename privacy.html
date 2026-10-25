@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#b5121b">
+<title>Privacy Policy | Daily Selibreti</title>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Yatra+One&display=swap" rel="stylesheet">
+<style>
+:root{--red:#b5121b;--dark:#191919;--muted:#6c727a;--line:#e7e7e7;--bg:#f4f5f7;--white:#fff}
+*{box-sizing:border-box}body{margin:0;background:#fff;color:#202124;font-family:'Mukta',sans-serif;line-height:1.7}
+a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}
+.sticky-header-container{position:sticky;top:0;z-index:100;background:#fff;box-shadow:0 4px 12px rgba(0,0,0,0.08)}
+.brandbar{background:#fff;border-bottom:1px solid var(--line)}
+.brand-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;position:relative;width:min(1180px,100%);margin:auto}
+.brand-center{text-align:center;flex:1;padding:0 5px}
+.brand-logo-area{display:flex;align-items:center;justify-content:center;gap:10px;text-decoration:none}
+.brand-logo-icon{position:relative;width:48px;height:48px;border-radius:50%;background:radial-gradient(circle, #ffe6e6 0%, #fdf2f2 100%);border:2px solid var(--red);display:flex;align-items:center;justify-content:center;box-shadow:0 3px 8px rgba(181, 18, 27, 0.2);flex-shrink:0}
+.brand-logo-ds{position:relative;z-index:2;font-family:'Mukta',sans-serif;font-weight:900;font-size:20px;color:var(--red);letter-spacing:-1px}
+.brand-text-wrap{text-align:left;display:inline-block}
+.brand{font-family:'Yatra One','Mukta',cursive;font-size:clamp(24px,5.8vw,38px);font-weight:700;color:var(--red);line-height:1.05;display:block}
+.brand-first-letter{font-size:1.38em;font-weight:800;color:#d90429;display:inline-block;transform:translateY(2px);margin-right:-2px}
+.brand-curve-underline{height:3px;background:linear-gradient(90deg,var(--red) 0%,#ff4d4d 70%,transparent 100%);border-radius:3px;margin-top:1px;width:100%}
+.brand-tagline{display:block;font-size:11px;letter-spacing:0.5px;color:#555;font-weight:600;margin-top:3px}
+.brand-date{font-size:12px;color:#666;font-weight:400;margin-top:4px;text-align:center}
+.head-icon{border:0;background:transparent;color:#191919;font-size:28px;line-height:1;padding:8px;cursor:pointer}
+.search-icon{font-size:30px}
+.nav{position:relative;background:#fff;color:#222;z-index:10}
+.nav-inner{display:none;position:absolute;left:16px;top:0;min-width:210px;background:#fff;color:#222;box-shadow:0 6px 22px #0002;flex-direction:column;align-items:stretch;border:1px solid #eee;z-index:130}
+.nav-inner.open{display:flex!important}
+.nav-inner a{padding:11px 15px;border-bottom:1px solid #eee;font-size:15px;font-weight:600}
+.nav-inner a:hover,.nav-inner a.active{background:#f7f7f7;color:var(--red)}
+
+main.wrap{width:100%;max-width:900px;margin:25px auto;padding:0 16px 40px;}
+h1{font-size:clamp(24px,4vw,32px);color:var(--red);border-bottom:2px solid var(--red);padding-bottom:10px;margin-bottom:20px;}
+h2{font-size:20px;color:#222;margin-top:25px;}
+p, li{font-size:18px;color:#333;line-height:1.85;font-weight:500;}
+ul{padding-left:20px;}
+
+footer{background:#191919;color:#ddd;padding:30px 0 18px;margin-top:40px;}
+footer .footgrid{display:grid;grid-template-columns:2fr 1fr 1fr;gap:25px;width:min(1180px,94%);margin:auto}
+footer h3{color:#fff;margin-top:0}
+footer p,footer a{font-size:14px;color:#bbb}
+footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;font-size:13px;text-align:center}
+@media(max-width:560px){ footer .footgrid{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<div class="sticky-header-container">
+  <header class="brandbar">
+    <div class="brand-inner">
+      <button class="head-icon" onclick="toggleMenu()" aria-label="Menu">☰</button>
+      <div class="brand-center">
+        <a href="index.html" class="brand-logo-area">
+          <div class="brand-logo-icon"><span class="brand-logo-ds">DS</span></div>
+          <div class="brand-text-wrap">
+            <span class="brand"><span class="brand-first-letter">डे</span>ली सेलिब्रेटी</span>
+            <div class="brand-curve-underline"></div>
+            <small class="brand-tagline">सबै खबर सबैका लागि</small>
+          </div>
+        </a>
+        <div class="brand-date" id="liveDate">Loading...</div>
+      </div>
+      <button class="head-icon search-icon" onclick="location.href='index.html'" aria-label="Home">⌕</button>
+    </div>
+  </header>
+  <nav class="nav">
+    <div style="width:min(1180px,100%);margin:auto;position:relative;">
+      <div class="nav-inner" id="navLinks">
+        <a href="index.html">Home</a>
+        <a href="privacy.html" class="active">Privacy Policy</a>
+        <a href="about.html">About Us</a>
+        <a href="contact.html">Contact Us</a>
+        <a href="terms.html">Terms & Conditions</a>
+      </div>
+    </div>
+  </nav>
+</div>
+
+<main class="wrap">
+  <h1>Privacy Policy</h1>
+  <p>Last updated: October 2026</p>
+  <p>Welcome to <strong>Daily Selibreti</strong> (accessible from <strong>dailyselibreti.com</strong>). Your privacy is of paramount importance to us. This Privacy Policy document outlines the types of personal information that is collected and recorded by Daily Selibreti and how we use it.</p>
+
+  <h2>1. Information We Collect</h2>
+  <p>We do not require users to register or create accounts to access our news articles. However, we may collect non-personal identification information automatically when you interact with our platform, such as:</p>
+  <ul>
+    <li>Browser name and version</li>
+    <li>Device type and operating system</li>
+    <li>IP address and domain details</li>
+    <li>Pages visited and time spent on our website</li>
+  </ul>
+
+  <h2>2. Log Files & Analytics</h2>
+  <p>Daily Selibreti follows a standard procedure of using log files and analytics. These files log visitors when they visit websites. The information collected by log files includes internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. This data is used for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.</p>
+
+  <h2>3. Cookies and Web Beacons</h2>
+  <p>Like any other website, Daily Selibreti uses 'cookies'. These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
+
+  <h2>4. Third-Party Advertising Partners</h2>
+  <p>Some of the advertisers on our site may use cookies and web beacons. Our advertising partners include third-party ad networks (such as Google AdMob / AdSense and other partners). Third-party ad servers or ad networks use technology in their respective advertisements and links that appear on Daily Selibreti, which are sent directly to users' browsers. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit.</p>
+  <p>Note that Daily Selibreti has no access to or control over these cookies that are used by third-party advertisers.</p>
+
+  <h2>5. Third-Party Privacy Policies</h2>
+  <p>Daily Selibreti's Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information. It may include their practices and instructions about how to opt-out of certain options.</p>
+
+  <h2>6. Children's Information</h2>
+  <p>Another part of our priority is adding protection for children while using the internet. We encourage parents and guardians to observe, participate in, and/or monitor and guide their online activity. Daily Selibreti does not knowingly collect any Personal Identifiable Information from children under the age of 13.</p>
+
+  <h2>7. Consent</h2>
+  <p>By using our website, you hereby consent to our Privacy Policy and agree to its Terms and Conditions.</p>
+
+  <h2>8. Contact Us</h2>
+  <p>If you have any additional questions, concerns, or require more information about our Privacy Policy, do not hesitate to contact us through our official communication channels:</p>
+  <ul style="list-style:none; padding-left:0;">
+    <li>📧 <strong>Email:</strong> Harishbist576@gmail.com</li>
+    <li>💬 <strong>WhatsApp:</strong> +977 9744706803</li>
+    <li>🌐 <strong>Website:</strong> https://dailyselibreti.com</li>
+  </ul>
+</main>
+
+<footer>
+  <div class="footgrid">
+    <div>
+      <h3>Daily Selibreti</h3>
+      <p>Digital medium for latest news, celebrity updates, and entertainment.</p>
+    </div>
+    <div>
+      <h3>Important Links</h3>
+      <p>
+        <a href="privacy.html">Privacy Policy</a><br>
+        <a href="about.html">About Us</a><br>
+        <a href="contact.html">Contact Us</a><br>
+        <a href="terms.html">Terms and Conditions</a>
+      </p>
+    </div>
+    <div>
+      <h3>Contact</h3>
+      <p>Email: Harishbist576@gmail.com<br>WhatsApp: 9744706803</p>
+    </div>
+  </div>
+  <div class="copyright">© <span id="year"></span> Daily Selibreti — All Rights Reserved.</div>
+</footer>
+
+<script>
+document.getElementById('year').textContent = new Date().getFullYear();
+function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
+function updateRealTimeDate() {
+  try {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'long' };
+    document.getElementById('liveDate').textContent = `${now.toLocaleDateString('en-US', options)}`;
+  } catch(e) {}
+}
+updateRealTimeDate();
+</script>
+</body>
+</html>
