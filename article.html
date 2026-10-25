@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#b5121b">
 <title id="pageTitle">डेली सेलिब्रेटी | नेपाली डिजिटल समाचार</title>
 
-<!-- Dynamic Open Graph Meta Tags for Sharing Thumbnail & Title -->
+<!-- Dynamic Open Graph Meta Tags -->
 <meta property="og:type" content="article">
 <meta property="og:title" id="ogTitle" content="डेली सेलिब्रेटी समाचार">
 <meta property="og:description" id="ogDesc" content="ताजा समाचार, विचार र जानकारी।">
@@ -24,87 +24,19 @@
 body{margin:0;background:#fff;color:#202124;font-family:'Mukta',sans-serif;line-height:1.7}
 a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}
 
-/* Sticky Header Container */
 .sticky-header-container {position: sticky;top: 0;z-index: 100;background: #fff;box-shadow: 0 4px 12px rgba(0,0,0,0.08);}
 .brandbar{background:#fff;border-bottom:1px solid var(--line)}
 .brand-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;position:relative;width:min(1180px,100%);margin:auto}
 .brand-center{text-align:center;flex:1;padding:0 5px}
 
-/* लोगो र नाम स्टाइलिङ */
-.brand-logo-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-decoration: none;
-}
-
-/* DS लोगो डिजाइन */
-.brand-logo-icon {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffe6e6 0%, #fdf2f2 100%);
-  border: 2px solid var(--red);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 8px rgba(181, 18, 27, 0.2);
-  flex-shrink: 0;
-}
-.brand-logo-ds {
-  position: relative;
-  z-index: 2;
-  font-family: 'Mukta', sans-serif;
-  font-weight: 900;
-  font-size: 20px;
-  color: var(--red);
-  letter-spacing: -1px;
-  text-shadow: 1px 1px 0px #fff;
-}
-
-.brand-text-wrap {
-  text-align: left;
-  display: inline-block;
-}
-.brand {
-  font-family: 'Yatra One', 'Mukta', cursive;
-  font-size: clamp(24px, 5.8vw, 38px);
-  font-weight: 700;
-  color: var(--red);
-  line-height: 1.05;
-  display: block;
-  letter-spacing: -0.5px;
-}
-
-/* 'डे' अक्षरलाई ठूलो बनाइएको */
-.brand-first-letter {
-  font-size: 1.38em;
-  font-weight: 800;
-  color: #d90429;
-  display: inline-block;
-  transform: translateY(2px);
-  margin-right: -2px;
-}
-
-/* घुमाउरो Underline */
-.brand-curve-underline {
-  height: 3px;
-  background: linear-gradient(90deg, var(--red) 0%, #ff4d4d 70%, transparent 100%);
-  border-radius: 3px;
-  margin-top: 1px;
-  width: 100%;
-}
-
-.brand-tagline {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  color: #555;
-  font-weight: 600;
-  margin-top: 3px;
-}
+.brand-logo-area {display: flex;align-items: center;justify-content: center;gap: 10px;text-decoration: none;}
+.brand-logo-icon {position: relative;width: 48px;height: 48px;border-radius: 50%;background: radial-gradient(circle, #ffe6e6 0%, #fdf2f2 100%);border: 2px solid var(--red);display: flex;align-items: center;justify-content: center;box-shadow: 0 3px 8px rgba(181, 18, 27, 0.2);flex-shrink: 0;}
+.brand-logo-ds {position: relative;z-index: 2;font-family: 'Mukta', sans-serif;font-weight: 900;font-size: 20px;color: var(--red);letter-spacing: -1px;text-shadow: 1px 1px 0px #fff;}
+.brand-text-wrap {text-align: left;display: inline-block;}
+.brand {font-family: 'Yatra One', 'Mukta', cursive;font-size: clamp(24px, 5.8vw, 38px);font-weight: 700;color: var(--red);line-height: 1.05;display: block;letter-spacing: -0.5px;}
+.brand-first-letter {font-size: 1.38em;font-weight: 800;color: #d90429;display: inline-block;transform: translateY(2px);margin-right: -2px;}
+.brand-curve-underline {height: 3px;background: linear-gradient(90deg, var(--red) 0%, #ff4d4d 70%, transparent 100%);border-radius: 3px;margin-top: 1px;width: 100%;}
+.brand-tagline {display: block;font-size: 11px;letter-spacing: 0.5px;color: #555;font-weight: 600;margin-top: 3px;}
 .brand-date{font-size:12px;color:#666;font-weight:400;margin-top:4px;text-align:center;}
 
 .article-date-text {font-size: 14px;}
@@ -114,118 +46,33 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
 .head-icon{border:0;background:transparent;color:#191919;font-size:28px;line-height:1;padding:8px;cursor:pointer}
 .search-icon{font-size:30px}
 
-/* Menu Dropdown */
 .nav{position:relative;background:#fff;color:#222;z-index:10}
 .nav-inner{display:none;position:absolute;left:16px;top:0;min-width:210px;background:#fff;color:#222;box-shadow:0 6px 22px #0002;flex-direction:column;align-items:stretch;border:1px solid #eee;z-index:130}
 .nav-inner.open{display:flex!important}
 .nav-inner a{padding:11px 15px;border-bottom:1px solid #eee;font-size:15px;font-weight:600}
 .nav-inner a:hover,.nav-inner a.active{background:#f7f7f7;color:var(--red)}
 
-/* Ad Box Style */
-.adsense-container {
-  width: 100%;
-  max-width: 900px;
-  margin: 10px auto;
-  text-align: center;
-  background: #fafafa;
-  border: 1px solid #e0e0e0;
-  border-radius: 4px;
-  padding: 6px;
-  overflow: hidden;
-  position: relative;
-}
-.adsense-label {
-  font-size: 8px;
-  color: #999;
-  letter-spacing: 0.5px;
-  margin-bottom: 2px;
-  text-transform: uppercase;
-  display: block;
-}
+.adsense-container {width: 100%;max-width: 900px;margin: 10px auto;text-align: center;background: #fafafa;border: 1px solid #e0e0e0;border-radius: 4px;padding: 6px;overflow: hidden;position: relative;}
+.adsense-label {font-size: 8px;color: #999;letter-spacing: 0.5px;margin-bottom: 2px;text-transform: uppercase;display: block;}
 .header-ad-space {padding: 1px 12px 3px;background: #fff;}
 .in-article-ad {margin: 20px auto; text-align: center;}
 
-/* Article Container */
 main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
 .article-title{font-size:clamp(24px,4.5vw,36px);line-height:1.35;margin:15px 0 18px;color:var(--dark);font-weight:700;}
 
-/* Author & Meta Bar */
-.author-meta-bar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 12px;
-  margin-bottom: 15px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
+.author-meta-bar {display: flex;align-items: center;justify-content: space-between;border-bottom: 1px solid var(--line);padding-bottom: 12px;margin-bottom: 15px;flex-wrap: wrap;gap: 10px;}
 .author-info {display: flex;align-items: center;gap: 10px;}
-
-.author-avatar {
-  font-size: 15px;
-  font-weight: 900;
-  color: var(--red);
-  background: #fdf2f2;
-  border: 2px solid var(--red);
-  border-radius: 50%;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  letter-spacing: -0.5px;
-}
+.author-avatar {font-size: 15px;font-weight: 900;color: var(--red);background: #fdf2f2;border: 2px solid var(--red);border-radius: 50%;width: 38px;height: 38px;display: flex;align-items: center;justify-content: center;letter-spacing: -0.5px;}
 .author-name {font-weight: 700;font-size: 16px;color: #222;}
 .lang-btn {background: var(--red);color: #fff;border: none;padding: 5px 12px;border-radius: 4px;font-size: 13px;font-weight: 600;}
 
-/* Shares Count & Social Share Row */
-.share-stats-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  border-bottom: 1px solid var(--line);
-  padding-bottom: 15px;
-  margin-bottom: 20px;
-  flex-wrap: wrap;
-  gap: 10px;
-}
-.shares-box {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-}
-.shares-count {
-  font-size: 24px;
-  font-weight: 800;
-  color: #333;
-  line-height: 1;
-}
-.shares-count span {
-  display: block;
-  font-size: 13px;
-  color: var(--muted);
-  font-weight: 400;
-}
-.vertical-divider {
-  width: 1px;
-  height: 30px;
-  background-color: var(--line);
-}
+.share-stats-row {display: flex;align-items: center;justify-content: space-between;border-bottom: 1px solid var(--line);padding-bottom: 15px;margin-bottom: 20px;flex-wrap: wrap;gap: 10px;}
+.shares-box {display: flex;align-items: center;gap: 15px;}
+.shares-count {font-size: 24px;font-weight: 800;color: #333;line-height: 1;}
+.shares-count span {display: block;font-size: 13px;color: var(--muted);font-weight: 400;}
+.vertical-divider {width: 1px;height: 30px;background-color: var(--line);}
 .social-icons {display: flex; gap: 10px; align-items: center;}
-.soc-btn {
-  width: 38px;
-  height: 38px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #fff;
-  border: none;
-  text-decoration: none;
-  transition: transform 0.2s;
-  cursor: pointer;
-}
+.soc-btn {width: 38px;height: 38px;border-radius: 50%;display: flex;align-items: center;justify-content: center;color: #fff;border: none;text-decoration: none;transition: transform 0.2s;cursor: pointer;}
 .soc-btn:hover { transform: scale(1.1); }
 .fb { background: #1877f2; }
 .tw { background: #000000; }
@@ -234,23 +81,13 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
 .soc-btn svg { width: 18px; height: 18px; fill: #fff; }
 
 .article-img{width:100%;max-height:480px;object-fit:cover;margin:10px 0 20px;border-radius:6px;}
-
 .youtube-container {position: relative; width: 100%; aspect-ratio: 16/9; margin: 20px 0; border-radius: 6px; overflow: hidden; background: #000;}
 .youtube-container iframe {width: 100%; height: 100%; border: none;}
 
-.article-body{
-  font-size: 20px;
-  line-height: 1.85;
-  color: #333333;
-  text-align: justify;
-  font-weight: 400;
-  letter-spacing: 0.2px;
-  white-space: pre-line;
-}
+.article-body{font-size: 20px;line-height: 1.85;color: #333333;text-align: justify;font-weight: 400;letter-spacing: 0.2px;white-space: pre-line;}
 .article-body img { max-width: 100%; height: auto; border-radius: 6px; margin: 15px 0; display: block; }
 .article-body mark { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; }
 
-/* Related News Cards Grid */
 .related-title {font-size: 22px; font-weight: 700; color: var(--red); border-bottom: 2px solid var(--red); padding-bottom: 6px; margin: 35px 0 20px;}
 #relatedNewsGrid {display: grid; grid-template-columns: 1fr; gap: 20px;}
 
@@ -274,9 +111,7 @@ footer h3{color:#fff;margin-top:0}
 footer p,footer a{font-size:14px;color:#bbb}
 footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;font-size:13px;text-align:center}
 
-@media(max-width:560px){
- footer .footgrid{grid-template-columns:1fr}
-}
+@media(max-width:560px){ footer .footgrid{grid-template-columns:1fr} }
 </style>
 </head>
 <body>
@@ -288,13 +123,9 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
       
       <div class="brand-center">
         <a href="index.html" class="brand-logo-area">
-          <div class="brand-logo-icon">
-            <span class="brand-logo-ds">DS</span>
-          </div>
+          <div class="brand-logo-icon"><span class="brand-logo-ds">DS</span></div>
           <div class="brand-text-wrap">
-            <span class="brand">
-              <span class="brand-first-letter">डे</span>ली सेलिब्रेटी
-            </span>
+            <span class="brand"><span class="brand-first-letter">डे</span>ली सेलिब्रेटी</span>
             <div class="brand-curve-underline"></div>
             <small class="brand-tagline">सबै खबर सबैका लागि</small>
           </div>
@@ -322,7 +153,6 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
     </div>
   </nav>
 
-  <!-- HEADER TOP AD BANNER BOX -->
   <div class="header-ad-space">
     <div class="adsense-container">
       <span class="adsense-label">विज्ञापन</span>
@@ -376,7 +206,6 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
   <div class="copyright">© <span id="year"></span> डेली सेलिब्रेटी — सर्वाधिकार सुरक्षित।</div>
 </footer>
 
-<!-- Firebase SDKs & Main Script with Working Share & Thumbnail Integration -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -414,9 +243,7 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
           document.getElementById('headerAdContainer').innerHTML = globalAds.ad728;
         }
       }
-    } catch(e) {
-      console.log("विज्ञापन लोड असफल");
-    }
+    } catch(e) {}
 
     if (!articleId) {
       showNotFound();
@@ -429,7 +256,7 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
 
       if (docSnap.exists()) {
         n = docSnap.data();
-        n.id = docSnap.id; // ID सुरक्षित राख्ने
+        n.id = docSnap.id;
 
         await window.fsMethods.updateDoc(docRef, {
           views: window.fsMethods.increment(1)
@@ -442,7 +269,6 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
         showNotFound();
       }
     } catch (error) {
-      console.error("समाचार लोड गर्दा त्रुटि:", error);
       showNotFound();
     }
   }
@@ -459,14 +285,14 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
         }
       });
       renderRelatedNews();
-    } catch(e) {
-      console.log("थप समाचारहरू लोड गर्न असफल");
-    }
+    } catch(e) {}
   }
 
-  // --- सेयर गर्ने फंक्शन (थम्बेल र मुख्य पोइन्टसहित) ---
+  // --- सेयर गर्ने फंक्शन (थम्बेल र मेन पोइन्ट/समरी फिक्स गरिएको) ---
   window.handleShare = async function(platform) {
-    if (n && n.id) {
+    if (!n) return;
+
+    if (n.id) {
       n.shares = (n.shares || 0) + 1;
       try {
         const docRef = window.fsMethods.doc(window.firebaseDb, "news", n.id);
@@ -480,16 +306,33 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
     }
 
     const shareUrl = window.location.href;
-    const shareTitle = n ? n.title : document.title;
-    // समाचारको पहिलो १५० अक्षरलाई मुख्य पोइन्ट/विवरण (Main Points/Summary) को रूपमा लिने
-    const shareDesc = n && n.body ? n.body.replace(/\[AD\]/g, '').substring(0, 140) + '...' : 'ताजा समाचार, विचार र जानकारी।';
+    const shareTitle = n.title || document.title;
+    
+    // Firebase मा फिल्डको नाम body, content, description वा text जे भए पनि तान्ने र HTML ट्याग हटाउने
+    const rawContent = n.body || n.content || n.description || n.text || '';
+    const cleanText = rawContent.replace(/\[AD\]/g, '').replace(/<[^>]*>?/gm, '');
+    const shareDesc = cleanText.substring(0, 140) + (cleanText.length > 140 ? '...' : '');
 
+    // मोबाइलमा Native Share API प्रयोग गर्ने (यसले थम्बेल, शीर्षक र मेन पोइन्ट सीधा एपमा पठाउँछ)
+    if (navigator.share && (platform === 'wa' || platform === 'fb' || platform === 'all')) {
+      try {
+        await navigator.share({
+          title: shareTitle,
+          text: '📌 ' + shareTitle + '\n\n' + shareDesc,
+          url: shareUrl,
+        });
+        return;
+      } catch (err) {
+        // युजरले क्यान्सिल गरेमा वा सपोर्ट नगरे तलको fallback चल्छ
+      }
+    }
+
+    // fallback लिङ्कहरू
     if (platform === 'fb') {
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
     } else if (platform === 'tw') {
       window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle + '\n\n' + shareDesc)}`, '_blank');
     } else if (platform === 'wa') {
-      // WhatsApp मा शीर्षक, मुख्य पोइन्टहरू र लिङ्क पठाउने
       window.open(`https://wa.me/?text=${encodeURIComponent('📌 ' + shareTitle + '\n\n' + shareDesc + '\n\n🔗 पढ्नुहोस्: ' + shareUrl)}`, '_blank');
     } else if (platform === 'em') {
       window.open(`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(shareTitle + '\n\n' + shareDesc + '\n\n' + shareUrl)}`);
@@ -518,12 +361,12 @@ function showNotFound() {
 function renderArticle(n) {
   document.getElementById('pageTitle').textContent = n.title + ' | डेली सेलिब्रेटी';
   
-  // Dynamic Open Graph Meta Tags सेट गर्ने (Thumbnail र Description को लागि)
   const articleThumb = n.image || placeholderImg;
-  const articleSummary = n.body ? n.body.replace(/\[AD\]/g, '').substring(0, 150) : 'ताजा समाचार।';
+  const rawContent = n.body || n.content || n.description || n.text || '';
+  const cleanSummary = rawContent.replace(/\[AD\]/g, '').replace(/<[^>]*>?/gm, '').substring(0, 150);
 
   document.getElementById('ogTitle').setAttribute('content', n.title);
-  document.getElementById('ogDesc').setAttribute('content', articleSummary);
+  document.getElementById('ogDesc').setAttribute('content', cleanSummary);
   document.getElementById('ogImage').setAttribute('content', articleThumb);
   document.getElementById('ogUrl').setAttribute('content', window.location.href);
 
@@ -535,7 +378,7 @@ function renderArticle(n) {
   const midAdCode = n.midAd || '<div style="font-size:12px;color:#888;">[ AD CODE ]</div>';
   const topBannerAd = (typeof globalAds !== 'undefined' && globalAds.ad728) ? globalAds.ad728 : '<div style="font-size:12px;color:#888;">[ BANNER AD ]</div>';
 
-  let formattedBody = (n.body || '').replace(/\[AD\]/g, `<div class="in-article-ad">${midAdCode}</div>`);
+  let formattedBody = rawContent.replace(/\[AD\]/g, `<div class="in-article-ad">${midAdCode}</div>`);
 
   let ytEmbedHtml = '';
   if(n.youtube) {
