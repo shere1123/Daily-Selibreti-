@@ -322,7 +322,7 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
     </div>
   </nav>
 
-  <!-- HEADER TOP AD BANNER BOX (Firebase बाट लाइभ लोड हुने) -->
+  <!-- HEADER TOP AD BANNER BOX -->
   <div class="header-ad-space">
     <div class="adsense-container">
       <span class="adsense-label">विज्ञापन</span>
@@ -376,7 +376,7 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
   <div class="copyright">© <span id="year"></span> डेली सेलिब्रेटी — सर्वाधिकार सुरक्षित।</div>
 </footer>
 
-<!-- Firebase SDKs (Modular v10) & Firestore Live Data Integration -->
+<!-- Firebase SDKs & Main Script with Working Share & Thumbnail Integration -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -397,7 +397,6 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
   window.firebaseDb = db;
   window.fsMethods = { collection, getDocs, doc, getDoc, updateDoc, increment };
 
-  // URL बाट articleId झिक्ने
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
 
@@ -406,7 +405,6 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
   let globalAds = {};
 
   async function initArticlePage() {
-    // 1. Firebase बाट विज्ञापनहरू लोड गर्ने
     try {
       const adDocRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
       const adDocSnap = await window.fsMethods.getDoc(adDocRef);
@@ -426,14 +424,13 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
     }
 
     try {
-      // 2. Firebase बाट त्यो निर्दिष्ट समाचार ल्याउने
       const docRef = window.fsMethods.doc(window.firebaseDb, "news", articleId);
       const docSnap = await window.fsMethods.getDoc(docRef);
 
       if (docSnap.exists()) {
         n = docSnap.data();
+        n.id = docSnap.id; // ID सुरक्षित राख्ने
 
-        // भ्युज १ ले बढाउने (Firebase increment)
         await window.fsMethods.updateDoc(docRef, {
           views: window.fsMethods.increment(1)
         });
@@ -456,7 +453,9 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
       news = [];
       querySnapshot.forEach((doc) => {
         if(doc.id !== currentId) {
-          news.push(doc.data());
+          let item = doc.data();
+          item.id = doc.id;
+          news.push(item);
         }
       });
       renderRelatedNews();
@@ -464,6 +463,38 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
       console.log("थप समाचारहरू लोड गर्न असफल");
     }
   }
+
+  // --- सेयर गर्ने फंक्शन (थम्बेल र मुख्य पोइन्टसहित) ---
+  window.handleShare = async function(platform) {
+    if (n && n.id) {
+      n.shares = (n.shares || 0) + 1;
+      try {
+        const docRef = window.fsMethods.doc(window.firebaseDb, "news", n.id);
+        await window.fsMethods.updateDoc(docRef, { shares: n.shares });
+      } catch (e) {}
+
+      const countEl = document.querySelector('.shares-count');
+      if (countEl) {
+        countEl.innerHTML = `${n.shares}<span>Shares</span>`;
+      }
+    }
+
+    const shareUrl = window.location.href;
+    const shareTitle = n ? n.title : document.title;
+    // समाचारको पहिलो १५० अक्षरलाई मुख्य पोइन्ट/विवरण (Main Points/Summary) को रूपमा लिने
+    const shareDesc = n && n.body ? n.body.replace(/\[AD\]/g, '').substring(0, 140) + '...' : 'ताजा समाचार, विचार र जानकारी।';
+
+    if (platform === 'fb') {
+      window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
+    } else if (platform === 'tw') {
+      window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle + '\n\n' + shareDesc)}`, '_blank');
+    } else if (platform === 'wa') {
+      // WhatsApp मा शीर्षक, मुख्य पोइन्टहरू र लिङ्क पठाउने
+      window.open(`https://wa.me/?text=${encodeURIComponent('📌 ' + shareTitle + '\n\n' + shareDesc + '\n\n🔗 पढ्नुहोस्: ' + shareUrl)}`, '_blank');
+    } else if (platform === 'em') {
+      window.open(`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(shareTitle + '\n\n' + shareDesc + '\n\n' + shareUrl)}`);
+    }
+  };
 
   initArticlePage();
 </script>
@@ -486,9 +517,14 @@ function showNotFound() {
 
 function renderArticle(n) {
   document.getElementById('pageTitle').textContent = n.title + ' | डेली सेलिब्रेटी';
+  
+  // Dynamic Open Graph Meta Tags सेट गर्ने (Thumbnail र Description को लागि)
+  const articleThumb = n.image || placeholderImg;
+  const articleSummary = n.body ? n.body.replace(/\[AD\]/g, '').substring(0, 150) : 'ताजा समाचार।';
+
   document.getElementById('ogTitle').setAttribute('content', n.title);
-  document.getElementById('ogDesc').setAttribute('content', n.body ? n.body.substring(0, 150) : '');
-  document.getElementById('ogImage').setAttribute('content', n.image || placeholderImg);
+  document.getElementById('ogDesc').setAttribute('content', articleSummary);
+  document.getElementById('ogImage').setAttribute('content', articleThumb);
   document.getElementById('ogUrl').setAttribute('content', window.location.href);
 
   let rawDate = n.date || 'आज';
@@ -496,7 +532,6 @@ function renderArticle(n) {
   let dayPart = parts[0] || '';
   let datePart = parts[1] ? parts.slice(1).join(',') : rawDate;
 
-  // Firebase बाट आएको वा पोस्टमा सेभ गरिएको Ad प्रयोग गर्ने
   const midAdCode = n.midAd || '<div style="font-size:12px;color:#888;">[ AD CODE ]</div>';
   const topBannerAd = (typeof globalAds !== 'undefined' && globalAds.ad728) ? globalAds.ad728 : '<div style="font-size:12px;color:#888;">[ BANNER AD ]</div>';
 
@@ -550,7 +585,7 @@ function renderArticle(n) {
       </div>
     </div>
     
-    <img class="article-img" src="${safe(n.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
+    <img class="article-img" src="${safe(articleThumb)}" onerror="this.src='${placeholderImg}'" alt="">
     
     <div class="adsense-container" style="margin: 15px 0;">
       <span class="adsense-label">विज्ञापन</span>
@@ -566,34 +601,6 @@ function renderArticle(n) {
       <div>${topBannerAd}</div>
     </div>
   `;
-}
-
-async function handleShare(platform) {
-  if(n && n.id) {
-    n.shares = (n.shares || 0) + 1;
-    try {
-      const docRef = window.fsMethods.doc(window.firebaseDb, "news", n.id);
-      await window.fsMethods.updateDoc(docRef, { shares: n.shares });
-    } catch(e) {}
-
-    const countEl = document.querySelector('.shares-count');
-    if(countEl) {
-      countEl.innerHTML = `${n.shares}<span>Shares</span>`;
-    }
-  }
-
-  const shareUrl = window.location.href;
-  const shareTitle = n ? n.title : document.title;
-
-  if (platform === 'fb') {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
-  } else if (platform === 'tw') {
-    window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(shareUrl)}&text=${encodeURIComponent(shareTitle)}`, '_blank');
-  } else if (platform === 'wa') {
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareTitle + ' ' + shareUrl)}`, '_blank');
-  } else if (platform === 'em') {
-    window.open(`mailto:?subject=${encodeURIComponent(shareTitle)}&body=${encodeURIComponent(shareUrl)}`);
-  }
 }
 
 function renderRelatedNews() {
