@@ -16,72 +16,14 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
 .brand-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;position:relative;width:min(1180px,100%);margin:auto}
 .brand-center{text-align:center;flex:1;padding:0 5px}
 
-/* ब्रान्ड र DS लोगो स्टाइल */
-.brand-logo-area {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  text-decoration: none;
-}
-.brand-logo-icon {
-  position: relative;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background: radial-gradient(circle, #ffe6e6 0%, #fdf2f2 100%);
-  border: 2px solid var(--red);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 3px 8px rgba(181, 18, 27, 0.2);
-  flex-shrink: 0;
-}
-.brand-logo-ds {
-  position: relative;
-  z-index: 2;
-  font-family: Arial, sans-serif;
-  font-weight: 900;
-  font-size: 20px;
-  color: var(--red);
-  letter-spacing: -1px;
-  text-shadow: 1px 1px 0px #fff;
-}
-.brand-text-wrap {
-  text-align: left;
-  display: inline-block;
-}
-.brand {
-  font-size: clamp(22px, 5vw, 34px);
-  font-weight: 700;
-  color: var(--red);
-  line-height: 1.05;
-  display: block;
-  letter-spacing: -0.5px;
-}
-.brand-first-letter {
-  font-size: 1.38em;
-  font-weight: 800;
-  color: #d90429;
-  display: inline-block;
-  transform: translateY(2px);
-  margin-right: -2px;
-}
-.brand-curve-underline {
-  height: 3px;
-  background: linear-gradient(90deg, var(--red) 0%, #ff4d4d 70%, transparent 100%);
-  border-radius: 3px;
-  margin-top: 1px;
-  width: 100%;
-}
-.brand-tagline {
-  display: block;
-  font-size: 11px;
-  letter-spacing: 0.5px;
-  color: #555;
-  font-weight: 600;
-  margin-top: 3px;
-}
+.brand-logo-area {display: flex;align-items: center;justify-content: center;gap: 10px;text-decoration: none;}
+.brand-logo-icon {position: relative;width: 48px;height: 48px;border-radius: 50%;background: radial-gradient(circle, #ffe6e6 0%, #fdf2f2 100%);border: 2px solid var(--red);display: flex;align-items: center;justify-content: center;box-shadow: 0 3px 8px rgba(181, 18, 27, 0.2);flex-shrink: 0;}
+.brand-logo-ds {position: relative;z-index: 2;font-family: Arial, sans-serif;font-weight: 900;font-size: 20px;color: var(--red);letter-spacing: -1px;text-shadow: 1px 1px 0px #fff;}
+.brand-text-wrap {text-align: left;display: inline-block;}
+.brand {font-size: clamp(22px, 5vw, 34px);font-weight: 700;color: var(--red);line-height: 1.05;display: block;letter-spacing: -0.5px;}
+.brand-first-letter {font-size: 1.38em;font-weight: 800;color: #d90429;display: inline-block;transform: translateY(2px);margin-right: -2px;}
+.brand-curve-underline {height: 3px;background: linear-gradient(90deg, var(--red) 0%, #ff4d4d 70%, transparent 100%);border-radius: 3px;margin-top: 1px;width: 100%;}
+.brand-tagline {display: block;font-size: 11px;letter-spacing: 0.5px;color: #555;font-weight: 600;margin-top: 3px;}
 .brand-date{font-size:12px;color:#666;font-weight:400;margin-top:2px;text-align:center;}
 
 .head-icon{border:0;background:transparent;color:#191919;font-size:28px;line-height:1;padding:8px;cursor:pointer}
@@ -93,26 +35,93 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
 .nav-inner a{padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700}
 .nav-inner a:hover,.nav-inner a.active{background:#f7f7f7;color:var(--red)}
 
-/* एड बक्सको स्टाइल */
-.adsense-container {width: 100%;max-width: 900px;margin: 2px auto;text-align: center;background: #fafafa;border: 1px solid #e0e0e0;border-radius: 3px;padding: 2px 4px;overflow: hidden;position: relative;}
-.adsense-label {font-size: 8px;color: #888;letter-spacing: 0.5px;margin-bottom: 1px;text-transform: uppercase;display: block;}
-.header-ad-space {padding: 2px 12px 3px;background: #fff;}
+/* १. माथिल्लो ब्यानर विज्ञापन कन्टेनर (अझै सानो बनाइएको) */
+.banner-320-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 6px auto;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 2px 4px;
+  overflow: hidden;
+}
+.banner-320-label {
+  font-size: 7px;
+  color: #bbb;
+  letter-spacing: 0.5px;
+  margin-bottom: 1px;
+  text-transform: uppercase;
+  display: block;
+  text-align: left;
+}
+.banner-320-body {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  min-height: 40px;
+  max-height: 60px;
+}
+.banner-320-body iframe, 
+.banner-320-body img, 
+.banner-320-body ins {
+  max-width: 100% !important;
+  max-height: 50px !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto;
+}
+
+/* २. समाचारको बीचमा आउने विज्ञापन कन्टेनर (अझै कम्प्याक्ट बनाइएको) */
+.adsense-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 8px auto;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #eee;
+  border-radius: 3px;
+  padding: 4px 6px;
+  overflow: hidden;
+  position: relative;
+}
+.adsense-label {
+  font-size: 7px;
+  color: #bbb;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
+  text-transform: uppercase;
+  display: block;
+  text-align: left;
+}
+.adsense-container iframe, 
+.adsense-container img, 
+.adsense-container ins {
+  max-width: 100% !important;
+  max-height: 150px !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto;
+}
 
 main.wrap{width:100%;max-width:none;padding:0 0 30px}
-#homeView{background:#fff;padding:0 0 24px}
+#homeView{background:#fff;padding:8px 0 24px}
 #homeView .layout{display:block;max-width:900px;margin:0 auto;padding:0 16px}
-#newsGrid{display:grid;grid-template-columns:1fr;gap:20px}
+#newsGrid{display:grid;grid-template-columns:1fr;gap:14px}
 
-#newsGrid .news-card{border:1px solid #dedede;border-radius:5px;padding:27px 27px 22px;box-shadow:none;text-align:center;background:#fff;overflow:hidden;cursor:pointer;transition:transform .15s}
+#newsGrid .news-card{border:1px solid #dedede;border-radius:5px;padding:20px 20px 18px;box-shadow:none;text-align:center;background:#fff;overflow:hidden;cursor:pointer;transition:transform .15s}
 #newsGrid .news-card:hover{transform:translateY(-3px)}
-#newsGrid .news-card img{width:100%;aspect-ratio:1.65;object-fit:cover;border-radius:4px;margin-top:20px}
-#newsGrid .news-copy h3{font-size:clamp(22px,4vw,34px);font-weight:500;line-height:1.45;margin:0 0 23px;color:#171717}
-#newsGrid .meta{justify-content:center;font-size:15px;margin:0 0 25px;color:var(--red);display:flex;gap:12px;flex-wrap:wrap;font-weight:700}
+#newsGrid .news-card img{width:100%;aspect-ratio:1.65;object-fit:cover;border-radius:4px;margin-top:15px}
+#newsGrid .news-copy h3{font-size:clamp(20px,3.8vw,30px);font-weight:500;line-height:1.4;margin:0 0 15px;color:#171717}
+#newsGrid .meta{justify-content:center;font-size:14px;margin:0 0 18px;color:var(--red);display:flex;gap:12px;flex-wrap:wrap;font-weight:700}
 #newsGrid .meta span:first-child{display:none}
 
-#newsGrid .compact-news-card{display:flex;gap:16px;align-items:center;border:1px solid #dedede;border-radius:5px;padding:14px 18px;background:#fff;cursor:pointer;transition:transform .15s,background .15s}
+#newsGrid .compact-news-card{display:flex;gap:14px;align-items:center;border:1px solid #dedede;border-radius:5px;padding:12px 14px;background:#fff;cursor:pointer;transition:transform .15s,background .15s}
 #newsGrid .compact-news-card:hover{transform:translateY(-2px);background:#fafafa}
-#newsGrid .compact-news-card img{width:110px;height:80px;object-fit:cover;border-radius:4px;flex-shrink:0}
+#newsGrid .compact-news-card img{width:100px;height:75px;object-fit:cover;border-radius:4px;flex-shrink:0}
 #newsGrid .compact-news-card .news-copy{text-align:left;flex:1}
 #newsGrid .compact-news-card .news-copy h3{font-size:clamp(15px,2.2vw,18px);font-weight:600;line-height:1.4;margin:0 0 6px;color:#171717}
 #newsGrid .compact-news-card .meta{justify-content:flex-start;font-size:12px;margin:0;color:var(--red);display:flex;gap:12px;font-weight:700}
@@ -125,7 +134,6 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
 .modal{display:none;position:fixed;inset:0;background:#0009;z-index:200;overflow:auto;padding:20px}.modal.show{display:block}.modal-box{background:#fff;max-width:820px;margin:25px auto;padding:20px;position:relative;border-radius:5px}.close{position:absolute;right:12px;top:8px;border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:21px}
 
 .form-group{margin:12px 0}.form-group label{display:block;font-weight:700;font-size:14px;margin-bottom:5px}.form-group input,.form-group textarea,.form-group select{width:100%;padding:10px;border:1px solid #ccc;border-radius:3px}.form-group textarea{min-height:110px}
-.admin-note{font-size:12px;color:#777}.admin-list{margin-top:20px}.admin-row{border:1px solid #ddd;padding:10px;margin:8px 0;display:flex;justify-content:space-between;gap:10px;align-items:center}
 .hide{display:none!important}
 </style>
 </head>
@@ -148,7 +156,7 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
             <small class="brand-tagline">सबै खबर सबैका लागि</small>
           </div>
         </a>
-        <div class="brand-date">Oct 25 2026 | २०८३, कार्तिक ८ गते</div>
+        <div class="brand-date" id="liveDate">लोड हुँदैछ...</div>
       </div>
       <button class="head-icon search-icon" onclick="openSearchModal()" aria-label="खोज्नुहोस्">⌕</button>
     </div>
@@ -169,33 +177,22 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
       </div>
     </div>
   </nav>
-
-  <!-- हेडर ब्यानर विज्ञापन (Firebase बाट लाइभ लोड हुने) -->
-  <div class="header-ad-space">
-    <div class="adsense-container">
-      <span class="adsense-label">विज्ञापन</span>
-      <div id="headerAdContainer" style="min-height: 25px; display:flex; align-items:center; justify-content:center; color:#666; font-size:11px;">[ HEADER BANNER AD ]</div>
-    </div>
-  </div>
 </div>
 
 <main class="wrap">
 <section id="homeView">
   <div class="layout">
-    <!-- टप फिड विज्ञापन (Firebase बाट लाइभ लोड हुने) -->
-    <div class="adsense-container">
-      <span class="adsense-label">विज्ञापन</span>
-      <div id="topFeedAdContainer" style="min-height: 40px; display:flex; align-items:center; justify-content:center; color:#666; font-size:12px;">[ TOP FEED RESPONSIVE AD PLACEHOLDER ]</div>
+    <div class="banner-320-container">
+      <span class="banner-320-label">विज्ञापन</span>
+      <div class="banner-320-body" id="topBannerContainer">
+        
+      </div>
     </div>
+
     <div><div id="newsGrid"></div></div>
   </div>
 </section>
 </main>
-
-<div class="adsense-container" style="max-width: 1180px;">
-  <span class="adsense-label">विज्ञापन</span>
-  <div id="footerAdContainer" style="min-height: 40px; display:flex; align-items:center; justify-content:center; color:#666; font-size:12px;">[ FOOTER TOP DISPLAY AD PLACEHOLDER ]</div>
-</div>
 
 <footer>
   <div class="footgrid">
@@ -232,7 +229,6 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
   </div>
 </div>
 
-<!-- Firebase SDKs (Modular v10) & Firestore Live Data Integration -->
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
   import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -253,33 +249,70 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
   window.firebaseDb = db;
   window.fsMethods = { collection, getDocs, doc, getDoc };
 
-  // 1. Firebase बाट समाचार लाइभ लोड गर्ने
+  function setHtmlWithScripts(element, htmlString) {
+    if (!element) return;
+    element.innerHTML = '';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlString;
+    
+    Array.from(tempDiv.childNodes).forEach(node => {
+      if (node.nodeName === 'SCRIPT') {
+        const script = document.createElement('script');
+        Array.from(node.attributes).forEach(attr => script.setAttribute(attr.name, attr.value));
+        if (node.src) {
+          script.src = node.src;
+        } else {
+          script.textContent = node.textContent;
+        }
+        document.body.appendChild(script);
+        element.appendChild(script);
+      } else {
+        element.appendChild(node.cloneNode(true));
+      }
+    });
+  }
+  window.setHtmlWithScripts = setHtmlWithScripts;
+
   async function loadNewsFromFirebase() {
     try {
       const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
       news = [];
-      querySnapshot.forEach((doc) => {
-        news.push(doc.data());
+      querySnapshot.forEach((docSnap) => {
+        let item = docSnap.data();
+        item.id = docSnap.id;
+        news.push(item);
       });
       renderNews();
     } catch (error) {
-      console.log("Firebase बाट समाचार लोड गर्दा समस्या आयो:", error);
+      console.log("Firebase लोड असफल:", error);
+      renderNews();
     }
   }
 
-  // 2. Firebase बाट विज्ञापनहरू लाइभ लोड गर्ने
   async function loadAdsFromFirebase() {
     try {
       const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
       const docSnap = await window.fsMethods.getDoc(docRef);
       if (docSnap.exists()) {
         const ads = docSnap.data();
-        if(ads.ad728) {
-          document.getElementById('headerAdContainer').innerHTML = ads.ad728;
+        
+        const topBannerCode = ads.ad728 || ads.ad320 || ads.banner;
+        if(topBannerCode) {
+          const bannerEl = document.getElementById('topBannerContainer');
+          if(bannerEl) {
+            setHtmlWithScripts(bannerEl, topBannerCode);
+          }
         }
+
         if(ads.ad300) {
-          document.getElementById('topFeedAdContainer').innerHTML = ads.ad300;
-          document.getElementById('footerAdContainer').innerHTML = ads.ad300;
+          window.globalAd300 = ads.ad300;
+          renderNews();
+        }
+
+        if(ads.adGlobal) {
+          const div = document.createElement('div');
+          setHtmlWithScripts(div, ads.adGlobal);
+          document.body.appendChild(div);
         }
       }
     } catch (error) {
@@ -295,12 +328,30 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
 const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80';
 
 let news = []; 
-
 let activeCategory='सबै';
-function persist(){localStorage.setItem('laligurash_news_v14',JSON.stringify(news))}
-function safe(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;n'}[c]))}
+window.globalAd300 = '';
+
+function safe(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
 document.getElementById('year').textContent = new Date().getFullYear();
+
+function updateRealTimeDate() {
+  try {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'long' };
+    const dateStr = now.toLocaleDateString('ne-NP', options);
+    const timeStr = now.toLocaleTimeString('ne-NP');
+    const dateEl = document.getElementById('liveDate');
+    if(dateEl) {
+      dateEl.textContent = `${dateStr} | ${timeStr}`;
+    }
+  } catch(e) {
+    const dateEl = document.getElementById('liveDate');
+    if(dateEl) dateEl.textContent = 'कार्तिक ८, २०८३';
+  }
+}
+setInterval(updateRealTimeDate, 1000);
+updateRealTimeDate();
 
 function imageFor(n){return safe(n.image||placeholderImg)}
 
@@ -308,7 +359,7 @@ function card(n){
   return `<article class="news-card" onclick="openArticle('${n.id}')">
     <div class="news-copy"><h3>${safe(n.title)}</h3></div>
     <img loading="lazy" src="${imageFor(n)}" onerror="this.src='${placeholderImg}'" alt="">
-    <div class="meta" style="margin-top:20px;">
+    <div class="meta" style="margin-top:15px;">
       <span>${safe(n.date||'आज')}</span>
       <span>${safe(n.category)}</span>
     </div>
@@ -329,13 +380,99 @@ function compactCard(n){
 }
 
 function renderNews(){
- let rawList=news.filter(n=>(activeCategory==='सबै'||n.category===activeCategory));
- document.getElementById('newsGrid').innerHTML=rawList.length?rawList.map((n,i)=>{
-   let mod = i % 8;
-   let isCompact = (mod >= 5 && mod < 8);
-   let html = isCompact ? compactCard(n) : card(n);
-   return html;
- }).join(''):'<div class="empty">यस क्याटेगोरीमा समाचार भेटिएन।</div>';
+  let rawList = news.filter(n => (activeCategory === 'सबै' || n.category === activeCategory));
+  
+  if (activeCategory === 'सबै' && news.length > 0) {
+    let catMap = {};
+    news.forEach(n => {
+      let cat = n.category || 'अन्य';
+      if (!catMap[cat]) catMap[cat] = [];
+      catMap[cat].push(n);
+    });
+
+    let categories = Object.keys(catMap);
+    let sortedNews = [];
+    let maxLength = Math.max(...categories.map(c => catMap[c].length));
+
+    for (let i = 0; i < maxLength; i++) {
+      for (let cat of categories) {
+        if (catMap[cat][i]) {
+          sortedNews.push(catMap[cat][i]);
+        }
+      }
+    }
+    rawList = sortedNews;
+  }
+
+  const getAd300Box = () => {
+    const containerId = 'ad300Box_' + Math.random().toString(36).substring(2);
+    setTimeout(() => {
+      const el = document.getElementById(containerId);
+      if(el && window.globalAd300) {
+        window.setHtmlWithScripts(el, window.globalAd300);
+      }
+    }, 50);
+
+    return `
+      <div class="adsense-container">
+        <span class="adsense-label">विज्ञापन</span>
+        <div style="width: 100%; overflow: hidden; display:flex; align-items:center; justify-content:center;" id="${containerId}">
+          ${window.globalAd300 ? '' : '[ ADVERTISEMENT ]'}
+        </div>
+      </div>
+    `;
+  };
+
+  let finalHTML = '';
+
+  let compactCount = 0;
+  let subsequentBigCount = 0;
+
+  rawList.forEach((n, i) => {
+    let isCompact = false;
+
+    if (activeCategory === 'सबै') {
+      if (i < 5) {
+        isCompact = false; 
+      } else {
+        let relIndex = i - 5;
+        let mod = relIndex % 5;
+        if (mod < 3) {
+          isCompact = true;  
+        } else {
+          isCompact = false; 
+        }
+      }
+    } else {
+      let mod = i % 8;
+      isCompact = (mod >= 5 && mod < 8);
+    }
+
+    finalHTML += isCompact ? compactCard(n) : card(n);
+
+    if (activeCategory === 'सबै' && i === 2) {
+      finalHTML += getAd300Box();
+    }
+    else if (activeCategory === 'सबै' && i >= 5 && isCompact) {
+      compactCount++;
+      if (compactCount === 3) {
+        finalHTML += getAd300Box();
+        compactCount = 0;
+      }
+    }
+    else if (activeCategory === 'सबै' && i >= 5 && !isCompact) {
+      subsequentBigCount++;
+      if (subsequentBigCount === 2) {
+        finalHTML += getAd300Box();
+        subsequentBigCount = 0;
+      }
+    }
+    else if (activeCategory !== 'सबै' && (i + 1) % 3 === 0) {
+      finalHTML += getAd300Box();
+    }
+  });
+
+  document.getElementById('newsGrid').innerHTML = finalHTML || '<div class="empty">यस क्याटेगोरीमा समाचार भेटिएन।</div>';
 }
 
 function chooseCategory(cat,el){
@@ -359,7 +496,7 @@ function closeSearchModal(){
 }
 function renderModalSearch(){
  const q=(document.getElementById('modalSearchInput')?.value||'').trim().toLowerCase();
- let list=news.filter(n=>(!q||(n.title+' '+n.category+' '+n.body).toLowerCase().includes(q)));
+ let list=news.filter(n=>(!q||(n.title+' '+n.category+' '+(n.body||n.content||'')).toLowerCase().includes(q)));
  const el=document.getElementById('modalSearchResults');
  if(!list.length){el.innerHTML='<p style="text-align:center;color:#777;padding:20px;">कुनै समाचार भेटिएन।</p>';return;}
  el.innerHTML=list.map(n=>`
@@ -374,16 +511,14 @@ function renderModalSearch(){
 }
 
 function openArticle(id){
- const n=news.find(x=>x.id===id);
- if(n){
-   n.views=(n.views||0)+1;
-   persist();
- }
- window.location.href = 'article.html?id=' + id;
+  try {
+    localStorage.setItem('cachedNewsList', JSON.stringify(news));
+  } catch(e) {}
+
+  window.location.href = 'article.html?id=' + id;
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearchModal();}});
-renderNews();
 </script>
 </body>
 </html>
