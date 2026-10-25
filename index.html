@@ -35,7 +35,7 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
 .nav-inner a{padding:11px 15px;border-bottom:1px solid #eee;font-size:14px;font-weight:700}
 .nav-inner a:hover,.nav-inner a.active{background:#f7f7f7;color:var(--red)}
 
-/* १. माथिल्लो ब्यानर विज्ञापन कन्टेनर (अझै सानो बनाइएको) */
+/* ब्यानर विज्ञापन कन्टेनर */
 .banner-320-container {
   width: 100%;
   max-width: 900px;
@@ -75,7 +75,7 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
   margin: 0 auto;
 }
 
-/* २. समाचारको बीचमा आउने विज्ञापन कन्टेनर (अझै कम्प्याक्ट बनाइएको) */
+/* समाचारको बीचमा आउने विज्ञापन कन्टेनर */
 .adsense-container {
   width: 100%;
   max-width: 900px;
@@ -184,9 +184,7 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
   <div class="layout">
     <div class="banner-320-container">
       <span class="banner-320-label">विज्ञापन</span>
-      <div class="banner-320-body" id="topBannerContainer">
-        
-      </div>
+      <div class="banner-320-body" id="topBannerContainer"></div>
     </div>
 
     <div><div id="newsGrid"></div></div>
@@ -229,105 +227,18 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
   </div>
 </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-  const firebaseConfig = {
-    apiKey: "AIzaSyCqBqz4i7eVYGIcEYA5AAw2OBLgE3Ad0tE",
-    authDomain: "news-portual.firebaseapp.com",
-    projectId: "news-portual",
-    storageBucket: "news-portual.firebasestorage.app",
-    messagingSenderId: "154817972966",
-    appId: "1:154817972966:web:5188ed07cedf7d54a6c927"
-  };
-
-  const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
-  
-  window.firebaseApp = app;
-  window.firebaseDb = db;
-  window.fsMethods = { collection, getDocs, doc, getDoc };
-
-  function setHtmlWithScripts(element, htmlString) {
-    if (!element) return;
-    element.innerHTML = '';
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlString;
-    
-    Array.from(tempDiv.childNodes).forEach(node => {
-      if (node.nodeName === 'SCRIPT') {
-        const script = document.createElement('script');
-        Array.from(node.attributes).forEach(attr => script.setAttribute(attr.name, attr.value));
-        if (node.src) {
-          script.src = node.src;
-        } else {
-          script.textContent = node.textContent;
-        }
-        document.body.appendChild(script);
-        element.appendChild(script);
-      } else {
-        element.appendChild(node.cloneNode(true));
-      }
-    });
-  }
-  window.setHtmlWithScripts = setHtmlWithScripts;
-
-  async function loadNewsFromFirebase() {
-    try {
-      const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
-      news = [];
-      querySnapshot.forEach((docSnap) => {
-        let item = docSnap.data();
-        item.id = docSnap.id;
-        news.push(item);
-      });
-      renderNews();
-    } catch (error) {
-      console.log("Firebase लोड असफल:", error);
-      renderNews();
-    }
-  }
-
-  async function loadAdsFromFirebase() {
-    try {
-      const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
-      const docSnap = await window.fsMethods.getDoc(docRef);
-      if (docSnap.exists()) {
-        const ads = docSnap.data();
-        
-        const topBannerCode = ads.ad728 || ads.ad320 || ads.banner;
-        if(topBannerCode) {
-          const bannerEl = document.getElementById('topBannerContainer');
-          if(bannerEl) {
-            setHtmlWithScripts(bannerEl, topBannerCode);
-          }
-        }
-
-        if(ads.ad300) {
-          window.globalAd300 = ads.ad300;
-          renderNews();
-        }
-
-        if(ads.adGlobal) {
-          const div = document.createElement('div');
-          setHtmlWithScripts(div, ads.adGlobal);
-          document.body.appendChild(div);
-        }
-      }
-    } catch (error) {
-      console.log("Firebase विज्ञापन लोड असफल:", error);
-    }
-  }
-
-  loadNewsFromFirebase();
-  loadAdsFromFirebase();
-</script>
-
 <script>
 const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80';
 
-let news = []; 
+// LocalStorage बाट तुरुन्तै डाटा लोड गर्ने (एप छिटो चल्नका लागि)
+let news = [];
+try {
+  const cachedNews = localStorage.getItem('cachedNewsList');
+  if (cachedNews) {
+    news = JSON.parse(cachedNews);
+  }
+} catch(e) {}
+
 let activeCategory='सबै';
 window.globalAd300 = '';
 
@@ -424,7 +335,6 @@ function renderNews(){
   };
 
   let finalHTML = '';
-
   let compactCount = 0;
   let subsequentBigCount = 0;
 
@@ -437,11 +347,7 @@ function renderNews(){
       } else {
         let relIndex = i - 5;
         let mod = relIndex % 5;
-        if (mod < 3) {
-          isCompact = true;  
-        } else {
-          isCompact = false; 
-        }
+        isCompact = (mod < 3);
       }
     } else {
       let mod = i % 8;
@@ -472,7 +378,12 @@ function renderNews(){
     }
   });
 
-  document.getElementById('newsGrid').innerHTML = finalHTML || '<div class="empty">यस क्याटेगोरीमा समाचार भेटिएन।</div>';
+  document.getElementById('newsGrid').innerHTML = finalHTML || '';
+}
+
+// यदि क्यास (Cache) मा पहिलेदेखि नै डेटा छ भने सुरुमै रेन्डर गर्ने (खाली ठाउँ नदेखियोस् भनेर)
+if (news.length > 0) {
+  renderNews();
 }
 
 function chooseCategory(cat,el){
@@ -514,11 +425,110 @@ function openArticle(id){
   try {
     localStorage.setItem('cachedNewsList', JSON.stringify(news));
   } catch(e) {}
-
   window.location.href = 'article.html?id=' + id;
 }
 
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearchModal();}});
+</script>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCqBqz4i7eVYGIcEYA5AAw2OBLgE3Ad0tE",
+    authDomain: "news-portual.firebaseapp.com",
+    projectId: "news-portual",
+    storageBucket: "news-portual.firebasestorage.app",
+    messagingSenderId: "154817972966",
+    appId: "1:154817972966:web:5188ed07cedf7d54a6c927"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  
+  window.firebaseApp = app;
+  window.firebaseDb = db;
+  window.fsMethods = { collection, getDocs, doc, getDoc };
+
+  function setHtmlWithScripts(element, htmlString) {
+    if (!element) return;
+    element.innerHTML = '';
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlString;
+    
+    Array.from(tempDiv.childNodes).forEach(node => {
+      if (node.nodeName === 'SCRIPT') {
+        const script = document.createElement('script');
+        Array.from(node.attributes).forEach(attr => script.setAttribute(attr.name, attr.value));
+        if (node.src) {
+          script.src = node.src;
+        } else {
+          script.textContent = node.textContent;
+        }
+        document.body.appendChild(script);
+        element.appendChild(script);
+      } else {
+        element.appendChild(node.cloneNode(true));
+      }
+    });
+  }
+  window.setHtmlWithScripts = setHtmlWithScripts;
+
+  // Firebase बाट डेटा लोड गरी LocalStorage मा सेभ गर्ने
+  async function loadNewsFromFirebase() {
+    try {
+      const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
+      let fetchedNews = [];
+      querySnapshot.forEach((docSnap) => {
+        let item = docSnap.data();
+        item.id = docSnap.id;
+        fetchedNews.push(item);
+      });
+      
+      if (fetchedNews.length > 0) {
+        news = fetchedNews;
+        localStorage.setItem('cachedNewsList', JSON.stringify(news)); // LocalStorage मा सेभ
+        renderNews(); // ताजा डाटासँग रिफ्रेस गर्ने
+      }
+    } catch (error) {
+      console.log("Firebase लोड असफल:", error);
+    }
+  }
+
+  async function loadAdsFromFirebase() {
+    try {
+      const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
+      const docSnap = await window.fsMethods.getDoc(docRef);
+      if (docSnap.exists()) {
+        const ads = docSnap.data();
+        
+        const topBannerCode = ads.ad728 || ads.ad320 || ads.banner;
+        if(topBannerCode) {
+          const bannerEl = document.getElementById('topBannerContainer');
+          if(bannerEl) {
+            setHtmlWithScripts(bannerEl, topBannerCode);
+          }
+        }
+
+        if(ads.ad300) {
+          window.globalAd300 = ads.ad300;
+          renderNews();
+        }
+
+        if(ads.adGlobal) {
+          const div = document.createElement('div');
+          setHtmlWithScripts(div, ads.adGlobal);
+          document.body.appendChild(div);
+        }
+      }
+    } catch (error) {
+      console.log("Firebase विज्ञापन लोड असफल:", error);
+    }
+  }
+
+  loadNewsFromFirebase();
+  loadAdsFromFirebase();
 </script>
 </body>
 </html>
