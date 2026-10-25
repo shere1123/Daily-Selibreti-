@@ -52,13 +52,15 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
 .nav-inner a{padding:11px 15px;border-bottom:1px solid #eee;font-size:15px;font-weight:600}
 .nav-inner a:hover,.nav-inner a.active{background:#f7f7f7;color:var(--red)}
 
-.adsense-container {width: 100%;max-width: 900px;margin: 10px auto;text-align: center;background: #fafafa;border: 1px solid #e0e0e0;border-radius: 4px;padding: 6px;overflow: hidden;position: relative;}
-.adsense-label {font-size: 8px;color: #999;letter-spacing: 0.5px;margin-bottom: 2px;text-transform: uppercase;display: block;}
-.header-ad-space {padding: 1px 12px 3px;background: #fff;}
-.in-article-ad {margin: 20px auto; text-align: center;}
+/* विज्ञापन कन्टेनर */
+.adsense-container {width: 100%;max-width: 900px;margin: 12px auto;text-align: center;background: #fff;border: 1px solid #dedede;border-radius: 5px;padding: 8px;overflow: hidden;position: relative;}
+.adsense-label {font-size: 9px;color: #999;letter-spacing: 0.5px;margin-bottom: 4px;text-transform: uppercase;display: block;text-align: left;}
+.adsense-body {width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;}
+.adsense-body iframe, .adsense-body img, .adsense-body ins { max-width: 100% !important; height: auto !important; display: block !important; margin: 0 auto; }
+.in-article-ad {margin: 15px 0; text-align: center;}
 
 main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
-.article-title{font-size:clamp(24px,4.5vw,36px);line-height:1.35;margin:15px 0 18px;color:var(--dark);font-weight:700;}
+.article-title{font-size:clamp(24px,4.5vw,36px);line-height:1.35;margin:15px 0 18px;color:var(--dark);font-weight:700;padding:0 4px;}
 
 .author-meta-bar {display: flex;align-items: center;justify-content: space-between;border-bottom: 1px solid var(--line);padding-bottom: 12px;margin-bottom: 15px;flex-wrap: wrap;gap: 10px;}
 .author-info {display: flex;align-items: center;gap: 10px;}
@@ -80,11 +82,43 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
 .em { background: #ea4335; }
 .soc-btn svg { width: 18px; height: 18px; fill: #fff; }
 
-.article-img{width:100%;max-height:480px;object-fit:cover;margin:10px 0 20px;border-radius:6px;}
-.youtube-container {position: relative; width: 100%; aspect-ratio: 16/9; margin: 20px 0; border-radius: 6px; overflow: hidden; background: #000;}
-.youtube-container iframe {width: 100%; height: 100%; border: none;}
+/* मुख्य थम्बनेल फोटो (वार पार / Edge-to-Edge Full Width) */
+.article-img {
+  width: calc(100% + 32px);
+  margin-left: -16px;
+  margin-right: -16px;
+  max-width: none;
+  aspect-ratio: 16/9;
+  object-fit: cover;
+  margin-top: 10px;
+  margin-bottom: 20px;
+  display: block;
+  border-radius: 0;
+}
 
-.article-body{font-size: 20px;line-height: 1.85;color: #333333;text-align: justify;font-weight: 400;letter-spacing: 0.2px;white-space: pre-line;}
+/* युट्युब भिडियो कन्टेनर (वार पार / Edge-to-Edge Full Width) */
+.youtube-container {
+  position: relative;
+  width: calc(100% + 32px);
+  margin-left: -16px;
+  margin-right: -16px;
+  aspect-ratio: 16/9;
+  margin-top: 15px;
+  margin-bottom: 20px;
+  background: #000;
+  border-radius: 0;
+  overflow: hidden;
+}
+.youtube-container iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.article-body{font-size: 20px;line-height: 1.85;color: #333333;text-align: justify;font-weight: 400;letter-spacing: 0.2px;white-space: pre-line;padding: 0 4px;}
 .article-body img { max-width: 100%; height: auto; border-radius: 6px; margin: 15px 0; display: block; }
 .article-body mark { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; }
 
@@ -130,7 +164,7 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
             <small class="brand-tagline">सबै खबर सबैका लागि</small>
           </div>
         </a>
-        <div class="brand-date">Oct 25 2026 | २०८३, कार्तिक ८ गते</div>
+        <div class="brand-date" id="liveDate">लोड हुँदैछ...</div>
       </div>
 
       <button class="head-icon search-icon" onclick="openSearchModal()" aria-label="खोज्नुहोस्">⌕</button>
@@ -152,15 +186,6 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
       </div>
     </div>
   </nav>
-
-  <div class="header-ad-space">
-    <div class="adsense-container">
-      <span class="adsense-label">विज्ञापन</span>
-      <div id="headerAdContainer" style="min-height: 32px; display:flex; align-items:center; justify-content:center; color:#888; font-size:11px;">
-        [ HEADER BANNER AD ]
-      </div>
-    </div>
-  </div>
 </div>
 
 <main class="wrap">
@@ -225,26 +250,15 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
   window.firebaseApp = app;
   window.firebaseDb = db;
   window.fsMethods = { collection, getDocs, doc, getDoc, updateDoc, increment };
+  window.globalAd300 = '';
 
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
 
-  let news = [];
   let n = null;
-  let globalAds = {};
+  window.news = [];
 
   async function initArticlePage() {
-    try {
-      const adDocRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
-      const adDocSnap = await window.fsMethods.getDoc(adDocRef);
-      if (adDocSnap.exists()) {
-        globalAds = adDocSnap.data();
-        if(globalAds.ad728) {
-          document.getElementById('headerAdContainer').innerHTML = globalAds.ad728;
-        }
-      }
-    } catch(e) {}
-
     if (!articleId) {
       showNotFound();
       return;
@@ -263,8 +277,9 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
         });
         n.views = (n.views || 0) + 1;
 
+        await loadAdsFromFirebase();
         renderArticle(n);
-        loadRelatedNews(articleId);
+        await loadRelatedNews(articleId);
       } else {
         showNotFound();
       }
@@ -273,22 +288,61 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
     }
   }
 
+  async function loadAdsFromFirebase() {
+    try {
+      const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
+      const docSnap = await window.fsMethods.getDoc(docRef);
+      if (docSnap.exists()) {
+        const ads = docSnap.data();
+        if(ads.ad300) {
+          window.globalAd300 = ads.ad300;
+        }
+      }
+    } catch (error) {}
+  }
+
+  function updateRealTimeDate() {
+    const now = new Date();
+    const options = { year: 'numeric', month: 'short', day: 'numeric', weekday: 'long' };
+    const dateStr = now.toLocaleDateString('ne-NP', options);
+    const timeStr = now.toLocaleTimeString('ne-NP');
+    const dateEl = document.getElementById('liveDate');
+    if(dateEl) {
+      dateEl.textContent = `${dateStr} | ${timeStr}`;
+    }
+  }
+  setInterval(updateRealTimeDate, 1000);
+  updateRealTimeDate();
+
   async function loadRelatedNews(currentId) {
     try {
-      const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
-      news = [];
-      querySnapshot.forEach((doc) => {
-        if(doc.id !== currentId) {
-          let item = doc.data();
-          item.id = doc.id;
-          news.push(item);
-        }
-      });
+      let rawNews = [];
+      const cached = localStorage.getItem('cachedNewsList');
+      if (cached) {
+        try {
+          const parsed = JSON.parse(cached);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            rawNews = parsed.filter(item => item.id !== currentId);
+          }
+        } catch(err) {}
+      }
+
+      if (rawNews.length === 0) {
+        const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
+        querySnapshot.forEach((docSnap) => {
+          let item = docSnap.data();
+          item.id = docSnap.id;
+          if (docSnap.id !== currentId) {
+            rawNews.push(item);
+          }
+        });
+      }
+
+      window.news = rawNews;
       renderRelatedNews();
     } catch(e) {}
   }
 
-  // --- सेयर गर्ने फंक्शन (थम्बेल र मेन पोइन्ट/समरी फिक्स गरिएको) ---
   window.handleShare = async function(platform) {
     if (!n) return;
 
@@ -307,13 +361,10 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
 
     const shareUrl = window.location.href;
     const shareTitle = n.title || document.title;
-    
-    // Firebase मा फिल्डको नाम body, content, description वा text जे भए पनि तान्ने र HTML ट्याग हटाउने
     const rawContent = n.body || n.content || n.description || n.text || '';
     const cleanText = rawContent.replace(/\[AD\]/g, '').replace(/<[^>]*>?/gm, '');
     const shareDesc = cleanText.substring(0, 140) + (cleanText.length > 140 ? '...' : '');
 
-    // मोबाइलमा Native Share API प्रयोग गर्ने (यसले थम्बेल, शीर्षक र मेन पोइन्ट सीधा एपमा पठाउँछ)
     if (navigator.share && (platform === 'wa' || platform === 'fb' || platform === 'all')) {
       try {
         await navigator.share({
@@ -322,12 +373,9 @@ footer .copyright{border-top:1px solid #444;margin-top:20px;padding-top:15px;fon
           url: shareUrl,
         });
         return;
-      } catch (err) {
-        // युजरले क्यान्सिल गरेमा वा सपोर्ट नगरे तलको fallback चल्छ
-      }
+      } catch (err) {}
     }
 
-    // fallback लिङ्कहरू
     if (platform === 'fb') {
       window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(shareUrl)}`, '_blank');
     } else if (platform === 'tw') {
@@ -375,10 +423,16 @@ function renderArticle(n) {
   let dayPart = parts[0] || '';
   let datePart = parts[1] ? parts.slice(1).join(',') : rawDate;
 
-  const midAdCode = n.midAd || '<div style="font-size:12px;color:#888;">[ AD CODE ]</div>';
-  const topBannerAd = (typeof globalAds !== 'undefined' && globalAds.ad728) ? globalAds.ad728 : '<div style="font-size:12px;color:#888;">[ BANNER AD ]</div>';
+  const adHtmlBox = `
+    <div class="adsense-container">
+      <span class="adsense-label">विज्ञापन</span>
+      <div class="adsense-body">
+        ${window.globalAd300 || '[ 300×250 ADVERTISEMENT ]'}
+      </div>
+    </div>
+  `;
 
-  let formattedBody = rawContent.replace(/\[AD\]/g, `<div class="in-article-ad">${midAdCode}</div>`);
+  let formattedBody = rawContent.replace(/\[AD\]/g, `<div class="in-article-ad">${adHtmlBox}</div>`);
 
   let ytEmbedHtml = '';
   if(n.youtube) {
@@ -430,33 +484,42 @@ function renderArticle(n) {
     
     <img class="article-img" src="${safe(articleThumb)}" onerror="this.src='${placeholderImg}'" alt="">
     
-    <div class="adsense-container" style="margin: 15px 0;">
-      <span class="adsense-label">विज्ञापन</span>
-      <div>${topBannerAd}</div>
-    </div>
-    
     ${ytEmbedHtml}
     
     <div class="article-body">${formattedBody}</div>
-    
-    <div class="adsense-container" style="margin: 20px 0 10px;">
-      <span class="adsense-label">विज्ञापन</span>
-      <div>${topBannerAd}</div>
-    </div>
   `;
 }
 
 function renderRelatedNews() {
-  const relatedList = news.slice(0, 4);
   const container = document.getElementById('relatedNewsGrid');
-  if(!relatedList.length) {
-    container.innerHTML = '<p style="color:#777;">अन्य समाचारहरू उपलब्ध छैनन्।</p>';
+  if(!window.news || !window.news.length) {
+    container.innerHTML = '<p style="text-align:center;color:#777;padding:20px;">अन्य समाचारहरू उपलब्ध छैनन्।</p>';
     return;
   }
+
+  const getAdBox = () => `
+    <div class="adsense-container">
+      <span class="adsense-label">विज्ञापन</span>
+      <div class="adsense-body">
+        ${window.globalAd300 || '[ 300×250 ADVERTISEMENT ]'}
+      </div>
+    </div>
+  `;
+
+  let finalHTML = '';
   
-  container.innerHTML = relatedList.map((item, i) => {
-    if(i % 2 === 0) {
-      return `<article class="news-card" onclick="location.href='article.html?id=${item.id}'">
+  window.news.forEach((item, i) => {
+    let isCompact = false;
+    let mod = i % 5;
+    
+    if (mod >= 2) {
+      isCompact = true;  
+    } else {
+      isCompact = false; 
+    }
+
+    if (!isCompact) {
+      finalHTML += `<article class="news-card" onclick="location.href='article.html?id=${item.id}'">
         <div class="news-copy"><h3>${safe(item.title)}</h3></div>
         <img loading="lazy" src="${safe(item.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
         <div class="meta" style="margin-top:15px;">
@@ -465,7 +528,7 @@ function renderRelatedNews() {
         </div>
       </article>`;
     } else {
-      return `<article class="compact-news-card" onclick="location.href='article.html?id=${item.id}'">
+      finalHTML += `<article class="compact-news-card" onclick="location.href='article.html?id=${item.id}'">
         <img loading="lazy" src="${safe(item.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
         <div class="news-copy">
           <h3>${safe(item.title)}</h3>
@@ -476,7 +539,13 @@ function renderRelatedNews() {
         </div>
       </article>`;
     }
-  }).join('');
+
+    if ((i + 1) % 3 === 0) {
+      finalHTML += getAdBox();
+    }
+  });
+
+  container.innerHTML = finalHTML;
 }
 
 function openSearchModal(){
@@ -491,7 +560,7 @@ function closeSearchModal(){
 }
 function renderModalSearch(){
  const q=(document.getElementById('modalSearchInput')?.value||'').trim().toLowerCase();
- let list=news.filter(n=>(!q||(n.title+' '+n.category+' '+n.body).toLowerCase().includes(q)));
+ let list = (window.news || []).filter(n=>(!q||(n.title+' '+n.category+' '+(n.body||n.content||'')).toLowerCase().includes(q)));
  const el=document.getElementById('modalSearchResults');
  if(!list.length){el.innerHTML='<p style="text-align:center;color:#777;padding:20px;">कुनै समाचार भेटिएन।</p>';return;}
  el.innerHTML=list.map(n=>`
