@@ -215,7 +215,7 @@ h2 { color: var(--red); margin-top: 0; font-size: 22px; border-bottom: 2px solid
           <label style="font-size:13px;">कम्पनीको लिङ्क / क्लिक गर्दा खुल्ने URL</label>
           <input id="sponsorLink" placeholder="https://company.com">
         </div>
-        <button class="btn secondary" style="padding: 8px 14px; font-size: 13px;" onclick="generateSponsorBanner()">ब्यानर कोड जेनेरेट गरी सेभ गर्नुहोस्</button>
+        <button class="btn secondary" style="padding: 8px 14px; font-size: 13px;" onclick="generateSponsorBanner()">ब्यानर जेनेरेट गरी तुरुन्त Firebase मा सेभ गर्नुहोस्</button>
       </div>
 
       <div class="form-group">
@@ -536,7 +536,7 @@ async function saveNews(){
   };
 
   try {
-    await window.fsMethods.setDoc(window.fsMethods.doc(window.firebaseDb, "news", newsId), newsData);
+    await window.fsMethods.setDoc(window.fsMethods.doc(window.firebaseDb, "news", newsId), newsData, { merge: true });
     showAlert('सफलतापूर्वक Firebase मा सेभ भयो!');
     clearForm();
     fetchNewsFromFirebase();
@@ -597,7 +597,8 @@ async function deleteNews(id){
   }
 }
 
-function generateSponsorBanner(){
+// 🥤 स्पोन्सर ब्यानर जेनेरेट गरी सीधै Firebase मा सेभ गर्ने फंक्सन
+async function generateSponsorBanner(){
   const imgUrl = document.getElementById('sponsorImg').value.trim();
   const targetLink = document.getElementById('sponsorLink').value.trim();
   if(!imgUrl || !targetLink){
@@ -606,10 +607,26 @@ function generateSponsorBanner(){
   }
   const htmlBanner = `<a href="${targetLink}" target="_blank"><img src="${imgUrl}" alt="Sponsor Ad" style="width:100%; max-height:90px; object-fit:contain; border-radius:4px;"></a>`;
   document.getElementById('adBanner728').value = htmlBanner;
-  showAlert('स्पोन्सर ब्यानर कोड तयार भयो!');
+
+  // तुरुन्तै Firebase मा सेभ गर्ने
+  const ad300 = document.getElementById('adBanner300').value;
+  const adGlobal = document.getElementById('adGlobalScript').value;
+
+  try {
+    await window.fsMethods.setDoc(window.fsMethods.doc(window.firebaseDb, "settings", "ads"), {
+      ad728: htmlBanner,
+      ad300: ad300,
+      adGlobal: adGlobal,
+      updatedAt: new Date().toISOString()
+    }, { merge: true });
+    showAlert('ब्यानर जेनेरेट भई Firebase मा सेभ भयो!');
+  } catch (error) {
+    console.error("ब्यानर सेभ गर्दा त्रुटि:", error);
+    alert('ब्यानर सेभ गर्दा त्रुटि: ' + error.message);
+  }
 }
 
-// 🎯 विज्ञापनहरू Firebase मा सेभ गर्ने
+// 🎯 सबै विज्ञापनहरू Firebase मा सेभ गर्ने
 async function saveGlobalAds(){
   const ad728 = document.getElementById('adBanner728').value;
   const ad300 = document.getElementById('adBanner300').value;
@@ -621,9 +638,10 @@ async function saveGlobalAds(){
       ad300: ad300,
       adGlobal: adGlobal,
       updatedAt: new Date().toISOString()
-    });
+    }, { merge: true });
     showAlert('सबै विज्ञापन सेटिंग्स Firebase मा सेभ भयो!');
   } catch (error) {
+    console.error("विज्ञापन सेभ गर्दा त्रुटि:", error);
     alert('विज्ञापन सेभ गर्दा त्रुटि: ' + error.message);
   }
 }
@@ -671,7 +689,7 @@ async function saveStaticPage(){
     await window.fsMethods.setDoc(window.fsMethods.doc(window.firebaseDb, "settings", "page_" + page), {
       content: content,
       updatedAt: new Date().toISOString()
-    });
+    }, { merge: true });
     showAlert('पेज Firebase मा सेभ भयो!');
   } catch (error) {
     alert('पेज सेभ गर्दा त्रुटि: ' + error.message);
