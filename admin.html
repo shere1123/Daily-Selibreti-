@@ -1,0 +1,682 @@
+<!DOCTYPE html>
+<html lang="ne">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#b5121b">
+<title>Admin Panel | डेली सेलिब्रेटी</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Mukta:wght@300;400;500;600;700;800&family=Yatra+One&display=swap" rel="stylesheet">
+<style>
+:root{--red:#b5121b;--dark:#191919;--muted:#6c727a;--line:#e7e7e7;--bg:#f4f5f7;--white:#fff}
+*{box-sizing:border-box}
+body{margin:0;background:#f4f5f7;color:#202124;font-family:'Mukta',sans-serif;line-height:1.6}
+a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}
+
+/* Header & Menu Bar */
+.sticky-header-container {position: sticky;top: 0;z-index: 100;background: #fff;box-shadow: 0 4px 12px rgba(0,0,0,0.08);}
+.brandbar{background:#fff;border-bottom:1px solid var(--line)}
+.brand-inner{display:flex;align-items:center;justify-content:space-between;padding:10px 16px;position:relative;width:min(1180px,100%);margin:auto}
+.brand-center{text-align:center;flex:1;padding:0 5px}
+.brand-logo-area {display: flex;align-items: center;justify-content: center;gap: 10px;text-decoration: none;}
+.brand-logo-icon {position: relative;width: 38px;height: 38px;border-radius: 50%;background: radial-gradient(circle, #ffe6e6 0%, #fdf2f2 100%);border: 2px solid var(--red);display: flex;align-items: center;justify-content: center;}
+.brand-logo-ds {font-family: 'Mukta', sans-serif;font-weight: 900;font-size: 15px;color: var(--red);}
+.brand {font-family: 'Yatra One', 'Mukta', cursive;font-size: clamp(18px, 4vw, 24px);font-weight: 700;color: var(--red);line-height: 1;}
+.brand-first-letter {font-size: 1.3em;font-weight: 800;color: #d90429;}
+.brand-curve-underline {height: 2px;background: var(--red);border-radius: 3px;margin-top: 1px;width: 100%;}
+.brand-tagline {display: block;font-size: 8px;color: #555;font-weight: 600;}
+
+/* मेनु बटन र ड्रपडाउन कन्टेनर */
+.admin-menu-wrap {position: relative; display: inline-block;}
+.menu-toggle-btn {background: var(--red); color: #fff; border: none; padding: 7px 14px; font-weight: 700; border-radius: 4px; font-size: 14px; display: flex; align-items: center; gap: 6px; cursor: pointer;}
+.admin-dropdown-menu {display: none; position: absolute; left: 0; top: 110%; background: #fff; min-width: 210px; box-shadow: 0 6px 20px rgba(0,0,0,0.12); border: 1px solid #e0e0e0; border-radius: 6px; z-index: 150; overflow: hidden;}
+.admin-dropdown-menu.show {display: block;}
+.dropdown-item {display: block; width: 100%; text-align: left; background: none; border: none; padding: 11px 16px; font-weight: 700; font-size: 14px; color: #333; border-bottom: 1px solid #f0f0f0; cursor: pointer; transition: background 0.15s;}
+.dropdown-item:hover, .dropdown-item.active {background: #fdf2f2; color: var(--red);}
+
+/* मुख्य कन्टेन्ट एरिया */
+main.wrap{width:100%;max-width:900px;margin:20px auto;padding:0 16px 40px;}
+.admin-card {background: #fff; border: 1px solid #e0e0e0; border-radius: 8px; padding: 25px; box-shadow: 0 2px 10px rgba(0,0,0,0.02); margin-bottom: 25px;}
+h2 { color: var(--red); margin-top: 0; font-size: 22px; border-bottom: 2px solid var(--red); padding-bottom: 8px; margin-bottom: 20px; }
+
+.form-group{margin:15px 0}
+.form-group label{display:block;font-weight:700;font-size:14px;margin-bottom:6px;color:#333}
+.form-group input, .form-group textarea, .form-group select{width:100%;padding:12px;border:1px solid #ccc;border-radius:6px;font-size:15px;background:#fff}
+
+.form-group textarea{min-height: 250px; line-height: 1.6;}
+
+/* सम्पादकका लागि टुलबार बटनहरू (Formatting Toolbar) */
+.editor-toolbar {display: flex; gap: 8px; margin-bottom: 8px; flex-wrap: wrap; background: #f8f9fa; padding: 8px; border: 1px solid #ccc; border-top-left-radius: 6px; border-top-right-radius: 6px;}
+.tool-btn {background: #fff; border: 1px solid #bbb; padding: 6px 12px; font-weight: 700; font-size: 13px; border-radius: 4px; cursor: pointer; color: #333;}
+.tool-btn:hover {background: #f0f0f0; border-color: var(--red); color: var(--red);}
+
+.inline-ad-box {background: #fff8f8; border: 1px dashed var(--red); padding: 15px; border-radius: 6px; margin-top: 15px;}
+.inline-ad-box textarea {min-height: 90px; font-family: monospace; font-size: 13px; background: #fff;}
+
+.btn{background:var(--red);border:0;color:#fff;padding:10px 20px;font-weight:700;border-radius:6px;font-size:15px;transition:background 0.2s}
+.btn:hover{background:#990f17}
+.btn.secondary{background:#333}
+.btn.light{background:#eee;color:#333}
+
+.admin-list{margin-top:15px}
+.admin-row{border:1px solid #e5e5e5;padding:12px 16px;margin:10px 0;display:flex;justify-content:space-between;gap:15px;align-items:center;background:#fff;border-radius:6px}
+.hide{display:none!important}
+.alert-box {padding: 10px 15px; background: #e6f4ea; color: #137333; border-radius: 6px; margin-bottom: 15px; font-weight: 600; display: none; font-size: 15px;}
+.preview-img {max-width: 120px; max-height: 90px; margin-top: 10px; border-radius: 6px; display: none; object-fit: cover;}
+</style>
+</head>
+<body>
+
+<div class="sticky-header-container">
+  <header class="brandbar">
+    <div class="brand-inner">
+      <div class="admin-menu-wrap" id="adminMenuWrap">
+        <button class="menu-toggle-btn" onclick="toggleAdminMenu()">☰ मेनु (Menu)</button>
+        <div class="admin-dropdown-menu" id="adminDropdownMenu">
+          <button class="dropdown-item active" onclick="switchSection('postSection', this)">✍️ पोस्ट (Post News)</button>
+          <button class="dropdown-item" onclick="switchSection('categorySection', this)">📁 क्याटेगोरी (Categories)</button>
+          <button class="dropdown-item" onclick="switchSection('adsSection', this)">🎯 विज्ञापन कन्ट्रोल (Ads Setup)</button>
+          <button class="dropdown-item" onclick="switchSection('settingsSection', this)">⚙️ सेटिङहरू (Settings)</button>
+          <button class="dropdown-item" onclick="switchSection('listSection', this)">📋 समाचार सूची (All News)</button>
+        </div>
+      </div>
+
+      <div class="brand-center">
+        <a href="index.html" class="brand-logo-area">
+          <div class="brand-logo-icon"><span class="brand-logo-ds">DS</span></div>
+          <div class="brand-text-wrap">
+            <span class="brand"><span class="brand-first-letter">डे</span>ली सेलिब्रेटी</span>
+            <div class="brand-curve-underline"></div>
+            <small class="brand-tagline">एडमिन कन्ट्रोल प्यानल</small>
+          </div>
+        </a>
+      </div>
+
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button id="logoutBtn" class="btn secondary hide" onclick="adminLogout()" style="font-size:12px; padding:6px 10px;">लगआउट</button>
+        <a href="index.html" class="btn light" style="font-size:12px; padding:6px 10px;">गृहपृष्ठ</a>
+      </div>
+    </div>
+  </header>
+</div>
+
+<!-- LOGIN SECTION -->
+<div id="adminLoginSection" class="admin-card" style="max-width: 420px; margin: 60px auto; text-align: center;">
+  <h2>Firebase Admin Login</h2>
+  <p style="color:#666; font-size:14px; margin-bottom:20px;">आफ्नो एडमिन इमेल र पासवर्ड प्रविष्ट गर्नुहोस्।</p>
+  <div class="form-group" style="text-align: left;">
+    <label>इमेल (Admin Email)</label>
+    <input id="adminEmail" type="email" placeholder="admin@dailyselibreti.com">
+  </div>
+  <div class="form-group" style="text-align: left;">
+    <label>पासवर्ड (Password)</label>
+    <input id="adminPassword" type="password" placeholder="पासवर्ड लेख्नुहोस्">
+  </div>
+  <button class="btn" style="width: 100%; margin-top: 10px;" onclick="adminFirebaseLogin()">लगइन गर्नुहोस्</button>
+</div>
+
+<!-- DASHBOARD CONTENT -->
+<div id="adminDashboard" class="hide">
+  <main class="wrap" style="margin-top: 25px;">
+    <div id="alertBox" class="alert-box">सफलतापूर्वक सेभ भयो!</div>
+
+    <!-- 1. POST SECTION -->
+    <div id="postSection" class="admin-card content-section">
+      <h2 id="formHeading">✍️ नयाँ समाचार पोस्ट गर्नुहोस्</h2>
+      <input type="hidden" id="editId">
+      
+      <div class="form-group">
+        <label>शीर्षक (Title)</label>
+        <input id="fTitle" placeholder="समाचारको मुख्य शीर्षक...">
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+        <div class="form-group">
+          <label>क्याटेगोरी छान्नुहोस्</label>
+          <select id="fCategory"></select>
+        </div>
+        <div class="form-group">
+          <label>प्रकाशन मिति</label>
+          <input id="fDate" placeholder="कार्तिक ८, २०८३">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>मुख्य फोटो (Featured Image)</label>
+        <input type="file" id="fImageFile" accept="image/*" onchange="handleImageUpload(event)" style="margin-bottom: 8px;">
+        <input id="fImage" placeholder="Image URL (https://i.ibb.co/...)">
+        <img id="imagePreview" class="preview-img" alt="Preview">
+      </div>
+
+      <div class="form-group">
+        <label>युट्युब भिडियो लिङ्क (YouTube Link - वैकल्पिक)</label>
+        <input id="fYoutube" placeholder="https://www.youtube.com/watch?v=...">
+      </div>
+
+      <!-- रिच टेक्स्ट सम्पादक (Rich Text Editor with Toolbar) -->
+      <div class="form-group">
+        <label>समाचार विवरण (Body Content)</label>
+        
+        <!-- टुलबार बटनहरू -->
+        <div class="editor-toolbar">
+          <button type="button" class="tool-btn" onclick="formatText('<b>', '</b>')"><b>B (मोटो)</b></button>
+          <button type="button" class="tool-btn" onclick="formatText('<mark>', '</mark>')">🟡 हाइलाइट</button>
+          <button type="button" class="tool-btn" onclick="insertAdTag()">🎯 विज्ञापन ([AD])</button>
+          <label class="tool-btn" style="cursor: pointer; margin: 0; display: inline-flex; align-items: center;">
+            📷 बीचमा फोटो राख्नुहोस्
+            <input type="file" accept="image/*" onchange="insertInlineImage(event)" style="display: none;">
+          </label>
+        </div>
+
+        <textarea id="fBody" style="border-top-left-radius: 0; border-top-right-radius: 0;" placeholder="यहाँ समाचारको विस्तृत विवरण लेख्नुहोस्..."></textarea>
+      </div>
+
+      <!-- बीचको विज्ञापन कोड कन्ट्रोल -->
+      <div class="inline-ad-box">
+        <label style="font-weight:700; font-size:14px; color:#b5121b; margin-bottom:6px; display:block;">🎯 टेक्स्टको बीचमा देखिने विज्ञापन (In-Article Ad Code)</label>
+        <p style="font-size:12px; color:#666; margin:0 0 8px;">माथिको विवरणमा जहाँ <b>[AD]</b> लेख्नुहुन्छ वा बटन थिच्नुहुन्छ, त्यहीँ यो विज्ञापन देखिन्छ।</p>
+        <textarea id="adMidArticle" placeholder="&lt;script&gt;...&lt;/script&gt;"></textarea>
+      </div>
+
+      <div style="display: flex; gap: 12px; margin-top: 20px;">
+        <button class="btn" onclick="saveNews()">पोस्ट सेभ गर्नुहोस्</button> 
+        <button class="btn light" onclick="clearForm()">क्लियर गर्नुहोस्</button>
+      </div>
+    </div>
+
+    <!-- 2. CATEGORY SECTION -->
+    <div id="categorySection" class="admin-card content-section hide">
+      <h2>📁 क्याटेगोरी व्यवस्थापन (Manage Categories)</h2>
+      <div class="form-group">
+        <label>नयाँ क्याटेगोरी थप्नुहोस्</label>
+        <div style="display: flex; gap: 10px;">
+          <input id="newCatInput" placeholder="जस्तै: अन्तराष्ट्रिय, स्वास्थ्य...">
+          <button class="btn" onclick="addCategory()">थप्नुहोस्</button>
+        </div>
+      </div>
+      <div style="margin-top: 20px;">
+        <h3 style="font-size: 16px; color: #333;">हालका क्याटेगोरीहरू:</h3>
+        <div id="categoryListContainer" style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;"></div>
+      </div>
+    </div>
+
+    <!-- 3. ADS SECTION -->
+    <div id="adsSection" class="admin-card content-section hide">
+      <h2>🎯 विज्ञापन कन्ट्रोल (Sponsor Banners & Ad Networks)</h2>
+      
+      <div style="background: #fdf2f2; border: 1px solid var(--red); padding: 15px; border-radius: 6px; margin-bottom: 20px;">
+        <h3 style="font-size: 16px; color: var(--red); margin-top:0; margin-bottom:10px;">🥤 कम्पनी/ब्रान्डको ब्यानर विज्ञापन बनाउने (Direct Sponsor Banner)</h3>
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label style="font-size:13px;">विज्ञापन ब्यानर फोटोको लिङ्क (Banner Image URL)</label>
+          <input id="sponsorImg" placeholder="https://i.ibb.co/...">
+        </div>
+        <div class="form-group" style="margin-bottom: 10px;">
+          <label style="font-size:13px;">कम्पनीको लिङ्क / क्लिक गर्दा खुल्ने URL</label>
+          <input id="sponsorLink" placeholder="https://company.com">
+        </div>
+        <button class="btn secondary" style="padding: 8px 14px; font-size: 13px;" onclick="generateSponsorBanner()">ब्यानर कोड जेनेरेट गरी सेभ गर्नुहोस्</button>
+      </div>
+
+      <div class="form-group">
+        <label>1. हेडर ब्यानर विज्ञापन कोड (Header Banner Ad)</label>
+        <textarea id="adBanner728" placeholder="Ad code here..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>2. ३००×२५० बक्स विज्ञापन कोड (Rectangle Banner Ad)</label>
+        <textarea id="adBanner300" placeholder="Ad code here..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <label>3. ग्लोबल स्क्रिप्ट / Popunder / In-Page Push</label>
+        <textarea id="adGlobalScript" placeholder="&lt;script&gt;...&lt;/script&gt;"></textarea>
+      </div>
+
+      <button class="btn" onclick="saveGlobalAds()">सबै विज्ञापन सेटिंग्स Firebase मा सेभ गर्नुहोस्</button>
+    </div>
+
+    <!-- 4. SETTINGS SECTION -->
+    <div id="settingsSection" class="admin-card content-section hide">
+      <h2>⚙️ सेटिङहरू र पेजहरू (Settings & Pages)</h2>
+      <div class="form-group">
+        <label>पेज छान्नुहोस् सम्पादन गर्न</label>
+        <select id="pageSelector" onchange="loadPageContent()">
+          <option value="privacy">Privacy Policy</option>
+          <option value="terms">Terms & Conditions</option>
+          <option value="about">About Us</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>पेज कन्टेन्ट (HTML)</label>
+        <textarea id="pageContentInput" style="min-height: 300px;"></textarea>
+      </div>
+      <button class="btn" onclick="saveStaticPage()">पेज Firebase मा सेभ गर्नुहोस्</button>
+    </div>
+
+    <!-- 5. NEWS LIST SECTION -->
+    <div id="listSection" class="admin-card content-section hide">
+      <h2>📋 सबै समाचारहरूको सूची (<span id="totalNewsCount">0</span>)</h2>
+      <div class="admin-list" id="adminNewsList"></div>
+    </div>
+
+  </main>
+</div>
+
+<!-- Firebase SDKs (Modular v10) & Firestore Integration -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, doc, setDoc, getDocs, getDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyCqBqz4i7eVYGIcEYA5AAw2OBLgE3Ad0tE",
+    authDomain: "news-portual.firebaseapp.com",
+    projectId: "news-portual",
+    storageBucket: "news-portual.firebasestorage.app",
+    messagingSenderId: "154817972966",
+    appId: "1:154817972966:web:5188ed07cedf7d54a6c927"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+  const auth = getAuth(app);
+  
+  window.firebaseApp = app;
+  window.firebaseDb = db;
+  window.firebaseAuth = auth;
+  window.fsMethods = { collection, doc, setDoc, getDocs, getDoc, deleteDoc };
+  window.signInWithEmailAndPassword = signInWithEmailAndPassword;
+  window.signOut = signOut;
+  window.onAuthStateChanged = onAuthStateChanged;
+
+  // स्वतः लगइन अवस्था जाँच गर्ने
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      showDashboard();
+      fetchNewsFromFirebase();
+      loadAdsFromFirebaseToAdmin();
+      loadPageContentFromFirebase();
+    } else {
+      showLogin();
+    }
+  });
+</script>
+
+<script>
+const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80';
+
+let news = [];
+let categories = ['राजनीति', 'समाज', 'अर्थतन्त्र', 'मनोरञ्जन', 'चलचित्र', 'खेलकुद', 'प्रविधि', 'विचार'];
+try {
+  const savedCats = JSON.parse(localStorage.getItem('laligurash_cats_v1'));
+  if(savedCats && savedCats.length) categories = savedCats;
+} catch(e) {}
+
+function persistCats(){ localStorage.setItem('laligurash_cats_v1', JSON.stringify(categories)); }
+function safe(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
+
+window.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('fDate').value = 'कार्तिक ८, २०८३';
+  loadCategoriesDropdown();
+});
+
+function toggleAdminMenu(){
+  document.getElementById('adminDropdownMenu').classList.toggle('show');
+}
+
+window.addEventListener('click', function(e){
+  if(!document.getElementById('adminMenuWrap').contains(e.target)){
+    document.getElementById('adminDropdownMenu').classList.remove('show');
+  }
+});
+
+// Firebase मार्फत लगइन गर्ने फंक्सन
+async function adminFirebaseLogin(){
+  const email = document.getElementById('adminEmail').value.trim();
+  const password = document.getElementById('adminPassword').value;
+
+  if(!email || !password){
+    alert('कृपया इमेल र पासवर्ड दुवै लेख्नुहोस्!');
+    return;
+  }
+
+  try {
+    await window.signInWithEmailAndPassword(window.firebaseAuth, email, password);
+    showAlert('सफलतापूर्वक लगइन भयो!');
+  } catch (error) {
+    alert('लगइन फेल भयो: ' + error.message);
+  }
+}
+
+// लगआउट फंक्सन
+async function adminLogout(){
+  try {
+    await window.signOut(window.firebaseAuth);
+    showAlert('सफलतापूर्वक लगआउट भयो!');
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function showDashboard(){
+  document.getElementById('adminLoginSection').classList.add('hide');
+  document.getElementById('adminDashboard').classList.remove('hide');
+  document.getElementById('logoutBtn').classList.remove('hide');
+  renderCategoryManagerList();
+}
+
+function showLogin(){
+  document.getElementById('adminLoginSection').classList.remove('hide');
+  document.getElementById('adminDashboard').classList.add('hide');
+  document.getElementById('logoutBtn').classList.add('hide');
+}
+
+function showAlert(msg){
+  const box = document.getElementById('alertBox');
+  box.textContent = msg; box.style.display = 'block';
+  setTimeout(() => { box.style.display = 'none'; }, 3000);
+}
+
+function switchSection(sectionId, btn){
+  document.querySelectorAll('.content-section').forEach(el => el.classList.add('hide'));
+  document.querySelectorAll('.dropdown-item').forEach(el => el.classList.remove('active'));
+  document.getElementById(sectionId).classList.remove('hide');
+  btn.classList.add('active');
+  document.getElementById('adminDropdownMenu').classList.remove('show');
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+// Firebase बाट समाचारहरू फेच गर्ने
+async function fetchNewsFromFirebase() {
+  try {
+    const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
+    news = [];
+    querySnapshot.forEach((doc) => {
+      news.push(doc.data());
+    });
+    renderAdminList();
+  } catch (error) {
+    console.error("समाचार लोड गर्न समस्या आयो: ", error);
+  }
+}
+
+// टेक्स्ट सम्पादक सहयोगी फंक्सनहरू
+function formatText(openTag, closeTag) {
+  const textarea = document.getElementById('fBody');
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const selectedText = textarea.value.substring(start, end);
+  const replacement = openTag + selectedText + closeTag;
+  textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+  textarea.selectionStart = start;
+  textarea.selectionEnd = start + replacement.length;
+  textarea.focus();
+}
+
+function insertAdTag() {
+  const textarea = document.getElementById('fBody');
+  const start = textarea.selectionStart;
+  const end = textarea.selectionEnd;
+  const tag = '[AD]';
+  textarea.value = textarea.value.substring(0, start) + tag + textarea.value.substring(end);
+  textarea.selectionStart = textarea.selectionEnd = start + tag.length;
+  textarea.focus();
+}
+
+function insertInlineImage(event) {
+  const file = event.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const base64Img = e.target.result;
+      const imgTag = `<img src="${base64Img}" style="width:100%; border-radius:6px; margin:15px 0;" alt="News Image">`;
+      const textarea = document.getElementById('fBody');
+      const start = textarea.selectionStart;
+      const end = textarea.selectionEnd;
+      textarea.value = textarea.value.substring(0, start) + imgTag + textarea.value.substring(end);
+      textarea.selectionStart = textarea.selectionEnd = start + imgTag.length;
+      textarea.focus();
+    }
+    reader.readAsDataURL(file);
+  }
+}
+
+function loadCategoriesDropdown(){
+  const select = document.getElementById('fCategory');
+  select.innerHTML = categories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+}
+
+function addCategory(){
+  const input = document.getElementById('newCatInput');
+  const val = input.value.trim();
+  if(!val){ alert('क्याटेगोरीको नाम लेख्नुहोस्।'); return; }
+  if(categories.includes(val)){ alert('यो क्याटेगोरी पहिल्यै छ!'); return; }
+  categories.push(val);
+  persistCats();
+  loadCategoriesDropdown();
+  renderCategoryManagerList();
+  input.value = '';
+  showAlert('नयाँ क्याटेगोरी थपियो!');
+}
+
+function renderCategoryManagerList(){
+  const container = document.getElementById('categoryListContainer');
+  container.innerHTML = categories.map(cat => `
+    <span style="background:#f0f0f0; padding:6px 12px; border-radius:4px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
+      ${cat}
+      ${['राजनीति','समाज','अर्थतन्त्र','मनोरञ्जन','चलचित्र','खेलकुद','प्रविधि','विचार'].includes(cat) ? '' : `<button onclick="deleteCategory('${cat}')" style="border:none; background:var(--red); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>`}
+    </span>
+  `).join('');
+}
+
+function deleteCategory(cat){
+  if(!confirm(`क्याटेगोरी "${cat}" मेटाउने हो?`)) return;
+  categories = categories.filter(c => c !== cat);
+  persistCats();
+  loadCategoriesDropdown();
+  renderCategoryManagerList();
+  showAlert('क्याटेगोरी हटाइयो!');
+}
+
+let uploadedImageBase64 = '';
+function handleImageUpload(event){
+  const file = event.target.files[0];
+  if(file){
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      uploadedImageBase64 = e.target.result;
+      document.getElementById('fImage').value = uploadedImageBase64;
+      const preview = document.getElementById('imagePreview');
+      preview.src = uploadedImageBase64; preview.style.display = 'block';
+    }
+    reader.readAsDataURL(file);
+  }
+}
+
+function clearForm(){
+  ['editId','fTitle','fImage','fBody','fYoutube','fImageFile','adMidArticle'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.value='';
+  });
+  document.getElementById('fCategory').selectedIndex=0;
+  document.getElementById('imagePreview').style.display='none';
+  uploadedImageBase64='';
+  document.getElementById('formHeading').textContent = '✍️ नयाँ समाचार पोस्ट गर्नुहोस्';
+}
+
+// Firebase मा समाचार सेभ गर्ने
+async function saveNews(){
+  const title = document.getElementById('fTitle').value.trim();
+  const body = document.getElementById('fBody').value.trim();
+  const category = document.getElementById('fCategory').value;
+  let image = document.getElementById('fImage').value.trim() || placeholderImg;
+  const youtube = document.getElementById('fYoutube').value.trim();
+  const date = document.getElementById('fDate').value.trim() || 'आज';
+  const midAd = document.getElementById('adMidArticle').value;
+  const editId = document.getElementById('editId').value;
+
+  if(!title || !body){ alert('शीर्षक र विवरण अनिवार्य छ।'); return; }
+
+  const newsId = editId ? editId : 'n' + Date.now();
+  const existingItem = news.find(n => n.id === newsId);
+
+  const newsData = {
+    id: newsId,
+    title: title,
+    body: body,
+    category: category,
+    image: image,
+    youtube: youtube,
+    date: date,
+    midAd: midAd,
+    views: existingItem ? (existingItem.views || 0) : 0,
+    shares: existingItem ? (existingItem.shares || 0) : 0,
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    await window.fsMethods.setDoc(window.fsMethods.doc(window.firebaseDb, "news", newsId), newsData);
+    showAlert('सफलतापूर्वक Firebase मा सेभ भयो!');
+    clearForm();
+    fetchNewsFromFirebase();
+  } catch (error) {
+    alert('Firebase मा सेभ गर्दा त्रुटि आयो: ' + error.message);
+  }
+}
+
+function renderAdminList(){
+  const el = document.getElementById('adminNewsList');
+  if(!el) return;
+  document.getElementById('totalNewsCount').textContent = news.length;
+  
+  if(!news.length){ el.innerHTML = '<p style="text-align:center;color:#777;padding:20px;">कुनै समाचार छैन।</p>'; return; }
+  
+  el.innerHTML = news.map(n => `
+    <div class="admin-row">
+      <div>
+        <b>${safe(n.title)}</b><br>
+        <small style="color:#b5121b;">${safe(n.category)} • ${safe(n.date)}</small>
+        <div style="font-size:12px; color:#555; margin-top:3px;">👁️ भ्युज: <b>${n.views || 0}</b> | 🔗 सेयर: <b>${n.shares || 0}</b></div>
+      </div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn secondary" style="padding:6px 12px; font-size:13px;" onclick="editNews('${n.id}')">सम्पादन</button> 
+        <button class="btn" style="padding:6px 12px; font-size:13px;" onclick="deleteNews('${n.id}')">हटाउनुहोस्</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function editNews(id){
+  const n = news.find(x => x.id === id);
+  if(!n) return;
+  switchSection('postSection', document.querySelectorAll('.dropdown-item')[0]);
+  document.getElementById('editId').value = n.id;
+  document.getElementById('fTitle').value = n.title;
+  document.getElementById('fCategory').value = n.category;
+  document.getElementById('fImage').value = n.image;
+  document.getElementById('fYoutube').value = n.youtube || '';
+  document.getElementById('fDate').value = n.date || '';
+  document.getElementById('fBody').value = n.body;
+  document.getElementById('adMidArticle').value = n.midAd || '';
+  if(n.image && n.image.startsWith('data:image')){
+    const preview = document.getElementById('imagePreview');
+    preview.src = n.image; preview.style.display = 'block';
+  }
+  document.getElementById('formHeading').textContent = '✏️ समाचार सम्पादन गर्नुहोस्';
+}
+
+async function deleteNews(id){
+  if(!confirm('यो समाचार हटाउने हो?')) return;
+  try {
+    await window.fsMethods.deleteDoc(window.fsMethods.doc(window.firebaseDb, "news", id));
+    showAlert('सफलतापूर्वक हटाइयो!');
+    fetchNewsFromFirebase();
+  } catch (error) {
+    alert('मेटाउँदा समस्या आयो: ' + error.message);
+  }
+}
+
+function generateSponsorBanner(){
+  const imgUrl = document.getElementById('sponsorImg').value.trim();
+  const targetLink = document.getElementById('sponsorLink').value.trim();
+  if(!imgUrl || !targetLink){
+    alert('कृपया फोटोको लिङ्क र कम्पनीको लिङ्क दुवै भर्नुहोस्!');
+    return;
+  }
+  const htmlBanner = `<a href="${targetLink}" target="_blank"><img src="${imgUrl}" alt="Sponsor Ad" style="width:100%; max-height:90px; object-fit:contain; border-radius:4px;"></a>`;
+  document.getElementById('adBanner728').value = htmlBanner;
+  showAlert('स्पोन्सर ब्यानर कोड तयार भयो!');
+}
+
+// 🎯 विज्ञापनहरू Firebase मा सेभ गर्ने
+async function saveGlobalAds(){
+  const ad728 = document.getElementById('adBanner728').value;
+  const ad300 = document.getElementById('adBanner300').value;
+  const adGlobal = document.getElementById('adGlobalScript').value;
+
+  try {
+    await window.fsMethods.setDoc(window.fsMethods.doc(window.firebaseDb, "settings", "ads"), {
+      ad728: ad728,
+      ad300: ad300,
+      adGlobal: adGlobal,
+      updatedAt: new Date().toISOString()
+    });
+    showAlert('सबै विज्ञापन सेटिंग्स Firebase मा सेभ भयो!');
+  } catch (error) {
+    alert('विज्ञापन सेभ गर्दा त्रुटि: ' + error.message);
+  }
+}
+
+async function loadAdsFromFirebaseToAdmin(){
+  try {
+    const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
+    const docSnap = await window.fsMethods.getDoc(docRef);
+    if(docSnap.exists()){
+      const ads = docSnap.data();
+      document.getElementById('adBanner728').value = ads.ad728 || '';
+      document.getElementById('adBanner300').value = ads.ad300 || '';
+      document.getElementById('adGlobalScript').value = ads.adGlobal || '';
+    }
+  } catch(e) {
+    console.log("विज्ञापन लोड गर्न असफल");
+  }
+}
+
+// ⚙️ सेटिङहरू/पेजहरू Firebase मा सेभ र लोड गर्ने
+async function loadPageContentFromFirebase(){
+  const page = document.getElementById('pageSelector').value;
+  try {
+    const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "page_" + page);
+    const docSnap = await window.fsMethods.getDoc(docRef);
+    if(docSnap.exists()){
+      document.getElementById('pageContentInput').value = docSnap.data().content || '';
+    } else {
+      document.getElementById('pageContentInput').value = '';
+    }
+  } catch(e) {
+    document.getElementById('pageContentInput').value = '';
+  }
+}
+
+async function loadPageContent(){
+  await loadPageContentFromFirebase();
+}
+
+async function saveStaticPage(){
+  const page = document.getElementById('pageSelector').value;
+  const content = document.getElementById('pageContentInput').value;
+
+  try {
+    await window.fsMethods.setDoc(window.fsMethods.doc(window.firebaseDb, "settings", "page_" + page), {
+      content: content,
+      updatedAt: new Date().toISOString()
+    });
+    showAlert('पेज Firebase मा सेभ भयो!');
+  } catch (error) {
+    alert('पेज सेभ गर्दा त्रुटि: ' + error.message);
+  }
+}
+</script>
+</body>
+</html>
