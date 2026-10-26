@@ -203,7 +203,6 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
         <a href="#" data-cat="खेलकुद" onclick="chooseCategory('खेलकुद',this);return false">खेलकुद</a>
         <a href="#" data-cat="प्रविधि" onclick="chooseCategory('प्रविधि',this);return false">प्रविधि</a>
         <a href="#" data-cat="विचार" onclick="chooseCategory('विचार',this);return false">विचार</a>
-        <!-- Quiz Link added here -->
         <a href="quiz.html" style="color:var(--red); font-weight:800;">Quiz 🎯</a>
       </div>
     </div>
@@ -261,15 +260,7 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
 <script>
 const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80';
 
-// LocalStorage बाट तुरुन्तै डाटा लोड गर्ने (एप छिटो चल्नका लागि)
 let news = [];
-try {
-  const cachedNews = localStorage.getItem('cachedNewsList');
-  if (cachedNews) {
-    news = JSON.parse(cachedNews);
-  }
-} catch(e) {}
-
 let activeCategory='सबै';
 window.globalAd300 = '';
 
@@ -296,6 +287,19 @@ setInterval(updateRealTimeDate, 1000);
 updateRealTimeDate();
 
 function imageFor(n){return safe(n.image||placeholderImg)}
+
+// समय निकाल्ने सुधारेको फंक्शन (String Date वा Timestamp दुवैलाई चिन्न)
+function getTimeVal(item) {
+  if (!item) return 0;
+  if (item.timestamp && item.timestamp.seconds) {
+    return item.timestamp.seconds * 1000;
+  }
+  if (item.createdAt) {
+    const parsed = Date.parse(item.createdAt);
+    if (!isNaN(parsed)) return parsed;
+  }
+  return 0;
+}
 
 function card(n, isTop = false){
   return `<article class="news-card ${isTop ? 'top-featured' : ''}" onclick="openArticle('${n.id}')">
@@ -353,7 +357,6 @@ function renderNews(){
   ];
 
   if (activeCategory === 'सबै') {
-    // प्रत्येक क्याटेगोरीका पोष्टहरू छानेर सर्ट गर्ने र त्यसको नवीनतम (latest) समय पत्ता लगाउने
     let processedCategories = categoryConfigs.map(catConfig => {
       let catNews = news.filter(n => {
         let c = (n.category || '').trim().toLowerCase();
@@ -361,13 +364,13 @@ function renderNews(){
       });
       
       catNews.sort((a, b) => {
-        let timeA = a.timestamp?.seconds || a.createdAt || 0;
-        let timeB = b.timestamp?.seconds || b.createdAt || 0;
+        let timeA = getTimeVal(a);
+        let timeB = getTimeVal(b);
         if (timeA !== timeB) return timeB - timeA;
         return String(b.id || '').localeCompare(String(a.id || ''));
       });
 
-      let latestTime = catNews.length > 0 ? (catNews[0].timestamp?.seconds || catNews[0].createdAt || 0) : 0;
+      let latestTime = catNews.length > 0 ? getTimeVal(catNews[0]) : 0;
 
       return {
         ...catConfig,
@@ -376,17 +379,14 @@ function renderNews(){
       };
     });
 
-    // **महत्वपूर्ण अपडेट:** जुन क्याटेगोरीमा नयाँ पोष्ट हालिन्छ (जस्तै खेलकुद), त्यसको latestTime सबैभन्दा नयाँ हुने भएकाले 
-    // यो बक्स स्वतः ब्यानर विज्ञापनको ठ्याक्कै तल (सबैभन्दा माथि) मा पुग्छ।
+    // नयाँ समाचार हालिएको क्याटेगोरी स्वतः माथि जाने
     processedCategories.sort((a, b) => b.latestTime - a.latestTime);
 
     processedCategories.forEach((catObj, index) => {
-      // क्याटेगोरी शीर्षक
       finalHTML += `<div class="category-section-title"><span>${catObj.title}</span> <a href="#" onclick="chooseCategory('${catObj.title}');return false">सबै हेर्नुहोस् »</a></div>`;
       
       if (catObj.catNews.length > 0) {
         catObj.catNews.forEach((n, i) => {
-          // नयाँ हालिएको समाचार स्वचालित रूपमा पहिलो (मुख्य) ठूलो बक्समा जान्छ
           if (i === 0) {
             finalHTML += card(n, true);
           } else if (i < 4) {
@@ -397,14 +397,12 @@ function renderNews(){
         finalHTML += `<div style="background:#fff; border:1px solid #dedede; border-radius:5px; padding:20px; text-align:center; color:#777; font-size:14px; margin-bottom:12px;">यस श्रेणीमा हाल कुनै समाचार उपलब्ध छैन।</div>`;
       }
 
-      // विज्ञापन कन्टेनर (प्रत्येक दुई सेक्सनपछि)
       if ((index + 1) % 2 === 0) {
         finalHTML += getAd300Box();
       }
     });
 
   } else {
-    // यदि मेनुबाट कुनै विशेष क्याटेगोरी छनोट गरिएको छ भने
     let targetConfig = categoryConfigs.find(c => c.title === activeCategory) || { title: activeCategory, matchKeys: [activeCategory] };
     
     let rawList = news.filter(n => {
@@ -413,8 +411,8 @@ function renderNews(){
     });
 
     rawList.sort((a, b) => {
-      let timeA = a.timestamp?.seconds || a.createdAt || 0;
-      let timeB = b.timestamp?.seconds || b.createdAt || 0;
+      let timeA = getTimeVal(a);
+      let timeB = getTimeVal(b);
       if (timeA !== timeB) return timeB - timeA;
       return String(b.id || '').localeCompare(String(a.id || ''));
     });
@@ -433,11 +431,6 @@ function renderNews(){
   }
 
   document.getElementById('newsGrid').innerHTML = finalHTML || '';
-}
-
-// यदि क्यास (Cache) मा पहिलेदेखि नै डेटा छ भने सुरुमै रेन्डर गर्ने
-if (news.length > 0) {
-  renderNews();
 }
 
 function chooseCategory(cat,el){
@@ -477,9 +470,6 @@ function renderModalSearch(){
 }
 
 function openArticle(id){
-  try {
-    localStorage.setItem('cachedNewsList', JSON.stringify(news));
-  } catch(e) {}
   window.location.href = 'article.html?id=' + id;
 }
 
@@ -530,7 +520,6 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearchModal();
   }
   window.setHtmlWithScripts = setHtmlWithScripts;
 
-  // Firebase बाट डेटा लोड गरी LocalStorage मा सेभ गर्ने
   async function loadNewsFromFirebase() {
     try {
       const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
@@ -543,8 +532,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearchModal();
       
       if (fetchedNews.length > 0) {
         news = fetchedNews;
-        localStorage.setItem('cachedNewsList', JSON.stringify(news)); // LocalStorage मा सेभ
-        renderNews(); // ताजा डाटासँग रिफ्रेस गर्ने
+        renderNews();
       }
     } catch (error) {
       console.log("Firebase लोड असफल:", error);
