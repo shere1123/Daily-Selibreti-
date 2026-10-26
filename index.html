@@ -42,19 +42,20 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
   margin: 6px auto;
   text-align: center;
   background: #fff;
-  border: 1px solid #eee;
-  border-radius: 3px;
-  padding: 2px 4px;
+  border: 1px solid #dedede;
+  border-radius: 5px;
+  padding: 4px 6px;
   overflow: hidden;
 }
 .banner-320-label {
-  font-size: 7px;
-  color: #bbb;
+  font-size: 9px;
+  color: #888;
   letter-spacing: 0.5px;
-  margin-bottom: 1px;
+  margin-bottom: 2px;
   text-transform: uppercase;
   display: block;
   text-align: left;
+  font-weight: 700;
 }
 .banner-320-body {
   width: 100%;
@@ -79,23 +80,25 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
 .adsense-container {
   width: 100%;
   max-width: 900px;
-  margin: 8px auto;
+  margin: 14px auto;
   text-align: center;
   background: #fff;
-  border: 1px solid #eee;
-  border-radius: 3px;
-  padding: 4px 6px;
+  border: 1px solid #dedede;
+  border-radius: 5px;
+  padding: 10px 12px 12px;
   overflow: hidden;
   position: relative;
+  box-shadow: none;
 }
 .adsense-label {
-  font-size: 7px;
-  color: #bbb;
+  font-size: 10px;
+  color: #777;
   letter-spacing: 0.5px;
-  margin-bottom: 2px;
+  margin-bottom: 6px;
   text-transform: uppercase;
   display: block;
   text-align: left;
+  font-weight: 700;
 }
 .adsense-container iframe, 
 .adsense-container img, 
@@ -134,15 +137,28 @@ main.wrap{width:100%;max-width:none;padding:0 0 30px}
 #newsGrid .news-card:hover{transform:translateY(-3px)}
 #newsGrid .news-card img{width:100%;aspect-ratio:1.65;object-fit:cover;border-radius:4px;margin-top:15px}
 
-/* सामान्य समाचार बक्सको शीर्षक साइज */
-#newsGrid .news-card h3{font-size:clamp(20px,3.8vw,30px);font-weight:500;line-height:1.4;margin:0 0 15px;color:#171717}
-
-/* श्रेणीको पहिलो (मुख्य) बक्सको लागि एकदम ठूलो, मोटो र आकर्षक शीर्षक साइज */
 #newsGrid .news-card.top-featured h3{
   font-size: clamp(34px, 7.8vw, 56px);
   font-weight: 800;
   line-height: 1.25;
   color: #111;
+}
+
+#newsGrid .news-card.reduced-featured {
+  padding: 14px 16px 12px;
+}
+#newsGrid .news-card.reduced-featured h3 {
+  font-size: clamp(20px, 3.5vw, 26px);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+#newsGrid .news-card.reduced-featured img {
+  aspect-ratio: 2.2;
+  margin-top: 10px;
+}
+#newsGrid .news-card.reduced-featured .meta {
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 
 #newsGrid .meta{justify-content:center;font-size:14px;margin:0 0 18px;color:var(--red);display:flex;gap:12px;flex-wrap:wrap;font-weight:700}
@@ -214,7 +230,7 @@ footer{background:#191919;color:#ddd;padding:30px 0 18px}footer .footgrid{displa
   <div class="layout">
     <div class="banner-320-container">
       <span class="banner-320-label">विज्ञापन</span>
-      <div class="banner-320-body" id="topBannerContainer"></div>
+      <div class="banner-320-body" id="topBannerContainer">[ ADVERTISEMENT ]</div>
     </div>
 
     <div><div id="newsGrid"></div></div>
@@ -262,7 +278,7 @@ const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f
 
 let news = [];
 let activeCategory='सबै';
-window.globalAd300 = '';
+window.globalAdsData = {};
 
 function safe(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
@@ -288,7 +304,6 @@ updateRealTimeDate();
 
 function imageFor(n){return safe(n.image||placeholderImg)}
 
-// समय निकाल्ने सुधारेको फंक्शन (String Date वा Timestamp दुवैलाई चिन्न)
 function getTimeVal(item) {
   if (!item) return 0;
   if (item.timestamp && item.timestamp.seconds) {
@@ -301,8 +316,8 @@ function getTimeVal(item) {
   return 0;
 }
 
-function card(n, isTop = false){
-  return `<article class="news-card ${isTop ? 'top-featured' : ''}" onclick="openArticle('${n.id}')">
+function card(n, isTop = false, customClass = ''){
+  return `<article class="news-card ${isTop ? 'top-featured' : ''} ${customClass}" onclick="openArticle('${n.id}')">
     <div class="news-copy"><h3>${safe(n.title)}</h3></div>
     <img loading="lazy" src="${imageFor(n)}" onerror="this.src='${placeholderImg}'" alt="">
     <div class="meta" style="margin-top:15px;">
@@ -314,7 +329,7 @@ function card(n, isTop = false){
 
 function compactCard(n){
   return `<article class="compact-news-card" onclick="openArticle('${n.id}')">
-    <img loading="lazy" src="${imageFor(n)}" onerror="this.src='${placeholderImg}'" alt="">
+    <img loading="lazy" src="${imageFor(n)}" onerror="this.src='${placeholderImg}'" alt="${safe(n.title)}">
     <div class="news-copy">
       <h3>${safe(n.title)}</h3>
       <div class="meta">
@@ -325,26 +340,55 @@ function compactCard(n){
   </article>`;
 }
 
-function renderNews(){
-  const getAd300Box = () => {
-    const containerId = 'ad300Box_' + Math.random().toString(36).substring(2);
-    setTimeout(() => {
-      const el = document.getElementById(containerId);
-      if(el && window.globalAd300) {
-        window.setHtmlWithScripts(el, window.globalAd300);
+function setHtmlWithScripts(element, htmlString) {
+  if (!element) return;
+  element.innerHTML = '';
+  if (!htmlString) {
+    element.innerHTML = '[ ADVERTISEMENT ]';
+    return;
+  }
+  const tempDiv = document.createElement('div');
+  tempDiv.innerHTML = htmlString;
+  
+  Array.from(tempDiv.childNodes).forEach(node => {
+    if (node.nodeName === 'SCRIPT') {
+      const script = document.createElement('script');
+      Array.from(node.attributes).forEach(attr => script.setAttribute(attr.name, attr.value));
+      if (node.src) {
+        script.src = node.src;
+      } else {
+        script.textContent = node.textContent;
       }
-    }, 50);
+      document.body.appendChild(script);
+      element.appendChild(script);
+    } else {
+      element.appendChild(node.cloneNode(true));
+    }
+  });
+}
+window.setHtmlWithScripts = setHtmlWithScripts;
 
-    return `
-      <div class="adsense-container">
-        <span class="adsense-label">विज्ञापन</span>
-        <div style="width: 100%; overflow: hidden; display:flex; align-items:center; justify-content:center;" id="${containerId}">
-          ${window.globalAd300 ? '' : '[ ADVERTISEMENT ]'}
-        </div>
+function getAd300Box() {
+  const containerId = 'ad300Box_' + Math.random().toString(36).substring(2);
+  setTimeout(() => {
+    const el = document.getElementById(containerId);
+    if(el) {
+      const adCode = window.globalAdsData.ad300 || window.globalAdsData.ad728 || window.globalAdsData.banner || '';
+      setHtmlWithScripts(el, adCode);
+    }
+  }, 50);
+
+  return `
+    <div class="adsense-container">
+      <span class="adsense-label">विज्ञापन</span>
+      <div style="width: 100%; overflow: hidden; display:flex; align-items:center; justify-content:center;" id="${containerId}">
+        [ ADVERTISEMENT ]
       </div>
-    `;
-  };
+    </div>
+  `;
+}
 
+function renderNews(){
   let finalHTML = '';
 
   const categoryConfigs = [
@@ -353,7 +397,9 @@ function renderNews(){
     { title: 'अर्थतन्त्र', matchKeys: ['अर्थतन्त्र', 'अर्थ'] },
     { title: 'मनोरञ्जन', matchKeys: ['मनोरञ्जन', 'मनोरन्जन'] },
     { title: 'चलचित्र', matchKeys: ['चलचित्र', 'फिल्म', 'movie'] },
-    { title: 'खेलकुद', matchKeys: ['खेलकुद', 'खेलकूद', 'खेल'] }
+    { title: 'खेलकुद', matchKeys: ['खेलकुद', 'खेलकूद', 'खेल'] },
+    { title: 'प्रविधि', matchKeys: ['प्रविधि', 'tech'] },
+    { title: 'विचार', matchKeys: ['विचार', 'opinion'] }
   ];
 
   if (activeCategory === 'सबै') {
@@ -379,28 +425,89 @@ function renderNews(){
       };
     });
 
-    // नयाँ समाचार हालिएको क्याटेगोरी स्वतः माथि जाने
     processedCategories.sort((a, b) => b.latestTime - a.latestTime);
 
-    processedCategories.forEach((catObj, index) => {
+    // सुरुका ५ वटा मुख्य क्याटेगोरीहरू
+    let top5Categories = processedCategories.slice(0, 5);
+
+    top5Categories.forEach((catObj, index) => {
       finalHTML += `<div class="category-section-title"><span>${catObj.title}</span> <a href="#" onclick="chooseCategory('${catObj.title}');return false">सबै हेर्नुहोस् »</a></div>`;
       
       if (catObj.catNews.length > 0) {
-        catObj.catNews.forEach((n, i) => {
-          if (i === 0) {
-            finalHTML += card(n, true);
-          } else if (i < 4) {
-            finalHTML += compactCard(n);
-          }
-        });
+        let n = catObj.catNews[0];
+        if(n) finalHTML += card(n, true);
       } else {
         finalHTML += `<div style="background:#fff; border:1px solid #dedede; border-radius:5px; padding:20px; text-align:center; color:#777; font-size:14px; margin-bottom:12px;">यस श्रेणीमा हाल कुनै समाचार उपलब्ध छैन।</div>`;
       }
 
-      if ((index + 1) % 2 === 0) {
+      // प्रत्येक ठूलो बक्स पछि वा पहिलो २ वटा ठूला बक्सपछि विज्ञापन देखाउने व्यवस्था
+      if (index === 0 || index === 1) {
         finalHTML += getAd300Box();
       }
     });
+
+    let allNewsSorted = [...news].sort((a, b) => {
+      let timeA = getTimeVal(a);
+      let timeB = getTimeVal(b);
+      if (timeA !== timeB) return timeB - timeA;
+      return String(b.id || '').localeCompare(String(a.id || ''));
+    });
+
+    let usedIds = new Set();
+    top5Categories.forEach(c => {
+      if(c.catNews.length > 0 && c.catNews[0].id) usedIds.add(c.catNews[0].id);
+    });
+
+    let remainingNews = allNewsSorted.filter(n => !usedIds.has(n.id));
+
+    // ३ वटा साना बक्सहरू (Compact Cards)
+    let firstSmallList = remainingNews.slice(0, 3);
+    if(firstSmallList.length > 0) {
+      finalHTML += `<div class="category-section-title"><span>थप समाचारहरू</span></div>`;
+      firstSmallList.forEach(n => {
+        finalHTML += compactCard(n);
+      });
+      remainingNews = remainingNews.slice(3);
+    }
+
+    // विज्ञापन (Ad)
+    finalHTML += getAd300Box();
+
+    // २ वटा ठूला बक्सहरू (Reduced Featured)
+    let twoLargeCards = remainingNews.slice(0, 2);
+    if(twoLargeCards.length > 0) {
+      twoLargeCards.forEach(n => {
+        finalHTML += card(n, false, 'reduced-featured');
+      });
+      remainingNews = remainingNews.slice(2);
+    }
+
+    // विज्ञापन (Ad)
+    finalHTML += getAd300Box();
+
+    // फेरि ३ वटा साना बक्सहरू (Compact Cards)
+    let secondSmallList = remainingNews.slice(0, 3);
+    if(secondSmallList.length > 0) {
+      secondSmallList.forEach(n => {
+        finalHTML += compactCard(n);
+      });
+      remainingNews = remainingNews.slice(3);
+    }
+
+    // विज्ञापन (Ad)
+    finalHTML += getAd300Box();
+
+    // बाँकी रहेका समाचारहरू
+    if(remainingNews.length > 0) {
+      remainingNews.forEach((n, i) => {
+        let isTop = (i % 3 === 0);
+        if(isTop) {
+          finalHTML += card(n, true);
+        } else {
+          finalHTML += compactCard(n);
+        }
+      });
+    }
 
   } else {
     let targetConfig = categoryConfigs.find(c => c.title === activeCategory) || { title: activeCategory, matchKeys: [activeCategory] };
@@ -478,7 +585,7 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearchModal();
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCqBqz4i7eVYGIcEYA5AAw2OBLgE3Ad0tE",
@@ -494,31 +601,31 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearchModal();
   
   window.firebaseApp = app;
   window.firebaseDb = db;
-  window.fsMethods = { collection, getDocs, doc, getDoc };
+  window.fsMethods = { collection, getDocs };
 
-  function setHtmlWithScripts(element, htmlString) {
-    if (!element) return;
-    element.innerHTML = '';
-    const tempDiv = document.createElement('div');
-    tempDiv.innerHTML = htmlString;
-    
-    Array.from(tempDiv.childNodes).forEach(node => {
-      if (node.nodeName === 'SCRIPT') {
-        const script = document.createElement('script');
-        Array.from(node.attributes).forEach(attr => script.setAttribute(attr.name, attr.value));
-        if (node.src) {
-          script.src = node.src;
-        } else {
-          script.textContent = node.textContent;
-        }
-        document.body.appendChild(script);
-        element.appendChild(script);
-      } else {
-        element.appendChild(node.cloneNode(true));
+  function applyAdsData(ads) {
+    window.globalAdsData = ads;
+
+    const topBannerCode = ads.ad728 || ads.ad320 || ads.banner;
+    if(topBannerCode) {
+      const bannerEl = document.getElementById('topBannerContainer');
+      if(bannerEl) {
+        setHtmlWithScripts(bannerEl, topBannerCode);
       }
-    });
+    }
+
+    if(ads.adGlobal) {
+      let globalAdEl = document.getElementById('globalDynamicAd');
+      if(!globalAdEl) {
+        globalAdEl = document.createElement('div');
+        globalAdEl.id = 'globalDynamicAd';
+        document.body.appendChild(globalAdEl);
+      }
+      setHtmlWithScripts(globalAdEl, ads.adGlobal);
+    }
+
+    renderNews();
   }
-  window.setHtmlWithScripts = setHtmlWithScripts;
 
   async function loadNewsFromFirebase() {
     try {
@@ -539,39 +646,22 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeSearchModal();
     }
   }
 
-  async function loadAdsFromFirebase() {
+  function listenAdsFromFirebase() {
     try {
-      const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
-      const docSnap = await window.fsMethods.getDoc(docRef);
-      if (docSnap.exists()) {
-        const ads = docSnap.data();
-        
-        const topBannerCode = ads.ad728 || ads.ad320 || ads.banner;
-        if(topBannerCode) {
-          const bannerEl = document.getElementById('topBannerContainer');
-          if(bannerEl) {
-            setHtmlWithScripts(bannerEl, topBannerCode);
-          }
+      const docRef = doc(db, "settings", "ads");
+      onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const ads = docSnap.data();
+          applyAdsData(ads);
         }
-
-        if(ads.ad300) {
-          window.globalAd300 = ads.ad300;
-          renderNews();
-        }
-
-        if(ads.adGlobal) {
-          const div = document.createElement('div');
-          setHtmlWithScripts(div, ads.adGlobal);
-          document.body.appendChild(div);
-        }
-      }
+      });
     } catch (error) {
-      console.log("Firebase विज्ञापन लोड असफल:", error);
+      console.log("Firebase विज्ञापन लाइभ सुन्ने प्रक्रिया असफल:", error);
     }
   }
 
   loadNewsFromFirebase();
-  loadAdsFromFirebase();
+  listenAdsFromFirebase();
 </script>
 </body>
 </html>
