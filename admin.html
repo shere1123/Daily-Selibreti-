@@ -305,6 +305,7 @@ h2 { color: var(--red); margin-top: 0; font-size: 22px; border-bottom: 2px solid
 
 <script>
 const placeholderImg='https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=900&q=80';
+const IMGBB_API_KEY = '27af0fd315a49f29ae77c629d73282db';
 
 let news = [];
 let categories = ['राजनीति', 'समाज', 'अर्थतन्त्र', 'मनोरञ्जन', 'चलचित्र', 'खेलकुद', 'प्रविधि', 'विचार'];
@@ -424,21 +425,60 @@ function insertAdTag() {
   textarea.focus();
 }
 
-function insertInlineImage(event) {
+// ImgBB मा फोटो अपलोड गर्ने जेनेरिक फंक्सन
+async function uploadToImgBB(file) {
+  const formData = new FormData();
+  formData.append('image', file);
+  
+  try {
+    const response = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+      method: 'POST',
+      body: formData
+    });
+    const data = await response.json();
+    if(data.success){
+      return data.data.url;
+    } else {
+      throw new Error(data.error.message || 'Upload failed');
+    }
+  } catch (err) {
+    alert('ImgBB मा फोटो अपलोड गर्दा त्रुटी आयो: ' + err.message);
+    return null;
+  }
+}
+
+// मुख्य फोटो (Featured Image) अपलोड ह्यान्डलर
+async function handleImageUpload(event){
   const file = event.target.files[0];
   if(file){
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      const base64Img = e.target.result;
-      const imgTag = `<img src="${base64Img}" style="width:100%; border-radius:6px; margin:15px 0;" alt="News Image">`;
+    showAlert('फोटो ImgBB मा अपलोड हुँदैछ...');
+    const url = await uploadToImgBB(file);
+    if(url) {
+      document.getElementById('fImage').value = url;
+      const preview = document.getElementById('imagePreview');
+      preview.src = url; 
+      preview.style.display = 'block';
+      showAlert('फोटो सफलतापूर्वक अपलोड भयो!');
+    }
+  }
+}
+
+// विवरण भित्र बीचमा राखिने फोटो (Inline Image) अपलोड ह्यान्डलर
+async function insertInlineImage(event) {
+  const file = event.target.files[0];
+  if(file){
+    showAlert('बीचको फोटो ImgBB मा अपलोड हुँदैछ...');
+    const url = await uploadToImgBB(file);
+    if(url) {
+      const imgTag = `<img src="${url}" style="width:100%; border-radius:6px; margin:15px 0;" alt="News Image">`;
       const textarea = document.getElementById('fBody');
       const start = textarea.selectionStart;
       const end = textarea.selectionEnd;
       textarea.value = textarea.value.substring(0, start) + imgTag + textarea.value.substring(end);
       textarea.selectionStart = textarea.selectionEnd = start + imgTag.length;
       textarea.focus();
+      showAlert('फोटो सफलतापूर्वक राखियो!');
     }
-    reader.readAsDataURL(file);
   }
 }
 
@@ -465,7 +505,7 @@ function renderCategoryManagerList(){
   container.innerHTML = categories.map(cat => `
     <span style="background:#f0f0f0; padding:6px 12px; border-radius:4px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
       ${cat}
-      ${['राजनीति','समाज','अर्थतन्त्र','मनोरञ्जन','चलचित्र','खेलकुद','प्रविधि','विचार'].includes(cat) ? '' : `<button onclick="deleteCategory('${cat}')" style="border:none; background:var(--red); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>`}
+      ${['राजनीति','সমাজ','अर्थतन्त्र','मनोरञ्जन','चलचित्र','खेलकुद','प्रविधि','विचार'].includes(cat) ? '' : `<button onclick="deleteCategory('${cat}')" style="border:none; background:var(--red); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>`}
     </span>
   `).join('');
 }
@@ -479,21 +519,6 @@ function deleteCategory(cat){
   showAlert('क्याटेगोरी हटाइयो!');
 }
 
-let uploadedImageBase64 = '';
-function handleImageUpload(event){
-  const file = event.target.files[0];
-  if(file){
-    const reader = new FileReader();
-    reader.onload = function(e) {
-      uploadedImageBase64 = e.target.result;
-      document.getElementById('fImage').value = uploadedImageBase64;
-      const preview = document.getElementById('imagePreview');
-      preview.src = uploadedImageBase64; preview.style.display = 'block';
-    }
-    reader.readAsDataURL(file);
-  }
-}
-
 function clearForm(){
   ['editId','fTitle','fImage','fBody','fYoutube','fImageFile','adMidArticle'].forEach(id=>{
     const el = document.getElementById(id);
@@ -501,7 +526,6 @@ function clearForm(){
   });
   document.getElementById('fCategory').selectedIndex=0;
   document.getElementById('imagePreview').style.display='none';
-  uploadedImageBase64='';
   document.getElementById('formHeading').textContent = '✍️ नयाँ समाचार पोस्ट गर्नुहोस्';
 }
 
@@ -532,7 +556,7 @@ async function saveNews(){
     midAd: midAd,
     views: existingItem ? (existingItem.views || 0) : 0,
     shares: existingItem ? (existingItem.shares || 0) : 0,
-    createdAt: new Date().toISOString()
+    createdAt: existingItem && existingItem.createdAt ? existingItem.createdAt : new Date().toISOString()
   };
 
   try {
@@ -545,6 +569,7 @@ async function saveNews(){
   }
 }
 
+// समाचार सूची (नयाँ समाचार सबैभन्दा माथि देखिने गरी)
 function renderAdminList(){
   const el = document.getElementById('adminNewsList');
   if(!el) return;
@@ -552,7 +577,14 @@ function renderAdminList(){
   
   if(!news.length){ el.innerHTML = '<p style="text-align:center;color:#777;padding:20px;">कुनै समाचार छैन।</p>'; return; }
   
-  el.innerHTML = news.map(n => `
+  // नयाँ समाचार माथि ल्याउनको लागि क्रम मिलाउने (Sorting by createdAt or ID descending)
+  const sortedNews = [...news].sort((a, b) => {
+    const timeA = a.createdAt ? new Date(a.createdAt).getTime() : parseInt(a.id.replace('n','')) || 0;
+    const timeB = b.createdAt ? new Date(b.createdAt).getTime() : parseInt(b.id.replace('n','')) || 0;
+    return timeB - timeA;
+  });
+
+  el.innerHTML = sortedNews.map(n => `
     <div class="admin-row">
       <div>
         <b>${safe(n.title)}</b><br>
@@ -579,7 +611,7 @@ function editNews(id){
   document.getElementById('fDate').value = n.date || '';
   document.getElementById('fBody').value = n.body;
   document.getElementById('adMidArticle').value = n.midAd || '';
-  if(n.image && n.image.startsWith('data:image')){
+  if(n.image){
     const preview = document.getElementById('imagePreview');
     preview.src = n.image; preview.style.display = 'block';
   }
