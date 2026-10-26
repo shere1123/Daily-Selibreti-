@@ -124,7 +124,7 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
   line-height: 1.85;
   color: #1a1a1a;
   text-align: justify;
-  font-weight: 600; /* अक्षर मोटो र गाढा बनाउनको लागि */
+  font-weight: 600;
   letter-spacing: 0.3px;
   white-space: pre-line;
   padding: 0 4px;
@@ -275,29 +275,8 @@ function showNotFound() {
   `;
 }
 
-// URL बाट ID लिने
-const urlParams = new URLSearchParams(window.location.search);
-const articleId = urlParams.get('id');
-
 let n = null;
 window.news = [];
-
-// १. तुरुन्तै LocalStorage बाट क्यास गरिएको समाचार खोजेर देखाउने (Instant Load)
-try {
-  const cached = localStorage.getItem('cachedNewsList');
-  if (cached) {
-    const parsed = JSON.parse(cached);
-    if (Array.isArray(parsed)) {
-      window.news = parsed.filter(item => item.id !== articleId);
-      const found = parsed.find(item => item.id === articleId);
-      if (found) {
-        n = found;
-        renderArticle(n);
-        renderRelatedNews();
-      }
-    }
-  }
-} catch(e) {}
 </script>
 
 <script type="module">
@@ -333,6 +312,7 @@ try {
     try {
       await loadAdsFromFirebase();
 
+      // Firebase बाट सिधै समाचार तान्ने
       const docRef = window.fsMethods.doc(window.firebaseDb, "news", articleId);
       const docSnap = await window.fsMethods.getDoc(docRef);
 
@@ -340,7 +320,7 @@ try {
         n = docSnap.data();
         n.id = docSnap.id;
 
-        // भ्युज बढाउने
+        // भ्युज (Views) १ बढाउने
         await window.fsMethods.updateDoc(docRef, {
           views: window.fsMethods.increment(1)
         });
@@ -348,13 +328,12 @@ try {
 
         renderArticle(n);
         await loadRelatedNews(articleId);
-      } else if (!n) {
+      } else {
         showNotFound();
       }
     } catch (error) {
-      if (!n) {
-        showNotFound();
-      }
+      console.error("समाचार लोड गर्दा त्रुटी:", error);
+      showNotFound();
     }
   }
 
@@ -366,7 +345,7 @@ try {
         const ads = docSnap.data();
         if(ads.ad300) {
           window.globalAd300 = ads.ad300;
-          if (n) renderArticle(n); // एड लोड भएपछि रिफ्रेस गर्ने
+          if (n) renderArticle(n);
         }
       }
     } catch (error) {}
@@ -376,19 +355,14 @@ try {
     try {
       const querySnapshot = await window.fsMethods.getDocs(window.fsMethods.collection(window.firebaseDb, "news"));
       let rawNews = [];
-      let fullList = [];
       
       querySnapshot.forEach((docSnap) => {
         let item = docSnap.data();
         item.id = docSnap.id;
-        fullList.push(item);
         if (docSnap.id !== currentId) {
           rawNews.push(item);
         }
       });
-
-      // लोकलस्टोरेज अपडेट गर्ने
-      localStorage.setItem('cachedNewsList', JSON.stringify(fullList));
 
       window.news = rawNews;
       renderRelatedNews();
