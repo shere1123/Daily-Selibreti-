@@ -112,14 +112,43 @@ main.wrap{width:100%;max-width:none;padding:0 0 30px}
 #homeView .layout{display:block;max-width:900px;margin:0 auto;padding:0 16px}
 #newsGrid{display:grid;grid-template-columns:1fr;gap:14px}
 
-#newsGrid .news-card{border:1px solid #dedede;border-radius:5px;padding:20px 20px 18px;box-shadow:none;text-align:center;background:#fff;overflow:hidden;cursor:pointer;transition:transform .15s}
+/* श्रेणी शीर्षक डिजाइन */
+.category-section-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--red);
+  border-bottom: 2px solid var(--red);
+  padding-bottom: 6px;
+  margin: 24px 0 14px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.category-section-title a {
+  font-size: 13px;
+  color: #555;
+  font-weight: 600;
+}
+
+#newsGrid .news-card{border:1px solid #dedede;border-radius:5px;padding:20px 20px 18px;box-shadow:none;text-align:center;background:#fff;overflow:hidden;cursor:pointer;transition:transform .15s; margin-bottom: 12px;}
 #newsGrid .news-card:hover{transform:translateY(-3px)}
 #newsGrid .news-card img{width:100%;aspect-ratio:1.65;object-fit:cover;border-radius:4px;margin-top:15px}
-#newsGrid .news-copy h3{font-size:clamp(20px,3.8vw,30px);font-weight:500;line-height:1.4;margin:0 0 15px;color:#171717}
+
+/* सामान्य समाचार बक्सको शीर्षक साइज */
+#newsGrid .news-card h3{font-size:clamp(20px,3.8vw,30px);font-weight:500;line-height:1.4;margin:0 0 15px;color:#171717}
+
+/* श्रेणीको पहिलो (मुख्य) बक्सको लागि एकदम ठूलो, मोटो र आकर्षक शीर्षक साइज */
+#newsGrid .news-card.top-featured h3{
+  font-size: clamp(34px, 7.8vw, 56px);
+  font-weight: 800;
+  line-height: 1.25;
+  color: #111;
+}
+
 #newsGrid .meta{justify-content:center;font-size:14px;margin:0 0 18px;color:var(--red);display:flex;gap:12px;flex-wrap:wrap;font-weight:700}
 #newsGrid .meta span:first-child{display:none}
 
-#newsGrid .compact-news-card{display:flex;gap:14px;align-items:center;border:1px solid #dedede;border-radius:5px;padding:12px 14px;background:#fff;cursor:pointer;transition:transform .15s,background .15s}
+#newsGrid .compact-news-card{display:flex;gap:14px;align-items:center;border:1px solid #dedede;border-radius:5px;padding:12px 14px;background:#fff;cursor:pointer;transition:transform .15s,background .15s; margin-bottom: 10px;}
 #newsGrid .compact-news-card:hover{transform:translateY(-2px);background:#fafafa}
 #newsGrid .compact-news-card img{width:100px;height:75px;object-fit:cover;border-radius:4px;flex-shrink:0}
 #newsGrid .compact-news-card .news-copy{text-align:left;flex:1}
@@ -268,8 +297,8 @@ updateRealTimeDate();
 
 function imageFor(n){return safe(n.image||placeholderImg)}
 
-function card(n){
-  return `<article class="news-card" onclick="openArticle('${n.id}')">
+function card(n, isTop = false){
+  return `<article class="news-card ${isTop ? 'top-featured' : ''}" onclick="openArticle('${n.id}')">
     <div class="news-copy"><h3>${safe(n.title)}</h3></div>
     <img loading="lazy" src="${imageFor(n)}" onerror="this.src='${placeholderImg}'" alt="">
     <div class="meta" style="margin-top:15px;">
@@ -293,30 +322,6 @@ function compactCard(n){
 }
 
 function renderNews(){
-  let rawList = news.filter(n => (activeCategory === 'सबै' || n.category === activeCategory));
-  
-  if (activeCategory === 'सबै' && news.length > 0) {
-    let catMap = {};
-    news.forEach(n => {
-      let cat = n.category || 'अन्य';
-      if (!catMap[cat]) catMap[cat] = [];
-      catMap[cat].push(n);
-    });
-
-    let categories = Object.keys(catMap);
-    let sortedNews = [];
-    let maxLength = Math.max(...categories.map(c => catMap[c].length));
-
-    for (let i = 0; i < maxLength; i++) {
-      for (let cat of categories) {
-        if (catMap[cat][i]) {
-          sortedNews.push(catMap[cat][i]);
-        }
-      }
-    }
-    rawList = sortedNews;
-  }
-
   const getAd300Box = () => {
     const containerId = 'ad300Box_' + Math.random().toString(36).substring(2);
     setTimeout(() => {
@@ -337,53 +342,100 @@ function renderNews(){
   };
 
   let finalHTML = '';
-  let compactCount = 0;
-  let subsequentBigCount = 0;
 
-  rawList.forEach((n, i) => {
-    let isCompact = false;
+  const categoryConfigs = [
+    { title: 'राजनीति', matchKeys: ['राजनीति', 'राजनिति'] },
+    { title: 'समाज', matchKeys: ['समाज'] },
+    { title: 'अर्थतन्त्र', matchKeys: ['अर्थतन्त्र', 'अर्थ'] },
+    { title: 'मनोरञ्जन', matchKeys: ['मनोरञ्जन', 'मनोरन्जन'] },
+    { title: 'चलचित्र', matchKeys: ['चलचित्र', 'फिल्म', 'movie'] },
+    { title: 'खेलकुद', matchKeys: ['खेलकुद', 'खेलकूद', 'खेल'] }
+  ];
 
-    if (activeCategory === 'सबै') {
-      if (i < 5) {
-        isCompact = false; 
+  if (activeCategory === 'सबै') {
+    // प्रत्येक क्याटेगोरीका पोष्टहरू छानेर सर्ट गर्ने र त्यसको नवीनतम (latest) समय पत्ता लगाउने
+    let processedCategories = categoryConfigs.map(catConfig => {
+      let catNews = news.filter(n => {
+        let c = (n.category || '').trim().toLowerCase();
+        return catConfig.matchKeys.some(key => c === key.toLowerCase() || c.includes(key.toLowerCase()));
+      });
+      
+      catNews.sort((a, b) => {
+        let timeA = a.timestamp?.seconds || a.createdAt || 0;
+        let timeB = b.timestamp?.seconds || b.createdAt || 0;
+        if (timeA !== timeB) return timeB - timeA;
+        return String(b.id || '').localeCompare(String(a.id || ''));
+      });
+
+      let latestTime = catNews.length > 0 ? (catNews[0].timestamp?.seconds || catNews[0].createdAt || 0) : 0;
+
+      return {
+        ...catConfig,
+        catNews,
+        latestTime
+      };
+    });
+
+    // **महत्वपूर्ण अपडेट:** जुन क्याटेगोरीमा नयाँ पोष्ट हालिन्छ (जस्तै खेलकुद), त्यसको latestTime सबैभन्दा नयाँ हुने भएकाले 
+    // यो बक्स स्वतः ब्यानर विज्ञापनको ठ्याक्कै तल (सबैभन्दा माथि) मा पुग्छ।
+    processedCategories.sort((a, b) => b.latestTime - a.latestTime);
+
+    processedCategories.forEach((catObj, index) => {
+      // क्याटेगोरी शीर्षक
+      finalHTML += `<div class="category-section-title"><span>${catObj.title}</span> <a href="#" onclick="chooseCategory('${catObj.title}');return false">सबै हेर्नुहोस् »</a></div>`;
+      
+      if (catObj.catNews.length > 0) {
+        catObj.catNews.forEach((n, i) => {
+          // नयाँ हालिएको समाचार स्वचालित रूपमा पहिलो (मुख्य) ठूलो बक्समा जान्छ
+          if (i === 0) {
+            finalHTML += card(n, true);
+          } else if (i < 4) {
+            finalHTML += compactCard(n);
+          }
+        });
       } else {
-        let relIndex = i - 5;
-        let mod = relIndex % 5;
-        isCompact = (mod < 3);
+        finalHTML += `<div style="background:#fff; border:1px solid #dedede; border-radius:5px; padding:20px; text-align:center; color:#777; font-size:14px; margin-bottom:12px;">यस श्रेणीमा हाल कुनै समाचार उपलब्ध छैन।</div>`;
       }
+
+      // विज्ञापन कन्टेनर (प्रत्येक दुई सेक्सनपछि)
+      if ((index + 1) % 2 === 0) {
+        finalHTML += getAd300Box();
+      }
+    });
+
+  } else {
+    // यदि मेनुबाट कुनै विशेष क्याटेगोरी छनोट गरिएको छ भने
+    let targetConfig = categoryConfigs.find(c => c.title === activeCategory) || { title: activeCategory, matchKeys: [activeCategory] };
+    
+    let rawList = news.filter(n => {
+      let c = (n.category || '').trim().toLowerCase();
+      return targetConfig.matchKeys.some(key => c === key.toLowerCase() || c.includes(key.toLowerCase()));
+    });
+
+    rawList.sort((a, b) => {
+      let timeA = a.timestamp?.seconds || a.createdAt || 0;
+      let timeB = b.timestamp?.seconds || b.createdAt || 0;
+      if (timeA !== timeB) return timeB - timeA;
+      return String(b.id || '').localeCompare(String(a.id || ''));
+    });
+
+    if (rawList.length > 0) {
+      rawList.forEach((n, i) => {
+        let isTop = (i === 0);
+        finalHTML += isTop ? card(n, true) : compactCard(n);
+        if ((i + 1) % 3 === 0) {
+          finalHTML += getAd300Box();
+        }
+      });
     } else {
-      let mod = i % 8;
-      isCompact = (mod >= 5 && mod < 8);
+      finalHTML = `<div class="empty">यस श्रेणीमा कुनै समाचार फेला परेन।</div>`;
     }
-
-    finalHTML += isCompact ? compactCard(n) : card(n);
-
-    if (activeCategory === 'सबै' && i === 2) {
-      finalHTML += getAd300Box();
-    }
-    else if (activeCategory === 'सबै' && i >= 5 && isCompact) {
-      compactCount++;
-      if (compactCount === 3) {
-        finalHTML += getAd300Box();
-        compactCount = 0;
-      }
-    }
-    else if (activeCategory === 'सबै' && i >= 5 && !isCompact) {
-      subsequentBigCount++;
-      if (subsequentBigCount === 2) {
-        finalHTML += getAd300Box();
-        subsequentBigCount = 0;
-      }
-    }
-    else if (activeCategory !== 'सबै' && (i + 1) % 3 === 0) {
-      finalHTML += getAd300Box();
-    }
-  });
+  }
 
   document.getElementById('newsGrid').innerHTML = finalHTML || '';
 }
 
-// यदि क्यास (Cache) मा पहिलेदेखि नै डेटा छ भने सुरुमै रेन्डर गर्ने (खाली ठाउँ नदेखियोस् भनेर)
+// यदि क्यास (Cache) मा पहिलेदेखि नै डेटा छ भने सुरुमै रेन्डर गर्ने
 if (news.length > 0) {
   renderNews();
 }
@@ -393,6 +445,7 @@ function chooseCategory(cat,el){
  document.querySelectorAll('#navLinks a[data-cat]').forEach(a=>a.classList.toggle('active',a.dataset.cat===cat));
  if(el)document.getElementById('navLinks').classList.remove('open');
  renderNews();
+ window.scrollTo({top: 0, behavior: 'smooth'});
 }
 
 function toggleMenu(){document.getElementById('navLinks').classList.toggle('open')}
