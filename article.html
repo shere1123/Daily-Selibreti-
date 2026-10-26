@@ -69,10 +69,7 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
 .lang-btn {background: var(--red);color: #fff;border: none;padding: 5px 12px;border-radius: 4px;font-size: 13px;font-weight: 600;}
 
 .share-stats-row {display: flex;align-items: center;justify-content: space-between;border-bottom: 1px solid var(--line);padding-bottom: 15px;margin-bottom: 20px;flex-wrap: wrap;gap: 10px;}
-.shares-box {display: flex;align-items: center;gap: 15px;}
-.shares-count {font-size: 24px;font-weight: 800;color: #333;line-height: 1;}
-.shares-count span {display: block;font-size: 13px;color: var(--muted);font-weight: 400;}
-.vertical-divider {width: 1px;height: 30px;background-color: var(--line);}
+.share-label {font-size: 15px;font-weight: 600;color: var(--muted);}
 .social-icons {display: flex; gap: 10px; align-items: center;}
 .soc-btn {width: 38px;height: 38px;border-radius: 50%;display: flex;align-items: center;justify-content: center;color: #fff;border: none;text-decoration: none;transition: transform 0.2s;cursor: pointer;}
 .soc-btn:hover { transform: scale(1.1); }
@@ -314,16 +311,18 @@ window.news = [];
         n = docSnap.data();
         n.id = docSnap.id;
 
-        // भ्युज (Views) काउन्ट बढाउने
+        renderArticle(n);
+        await loadRelatedNews(articleId);
+
+        // भ्युज (Views) काउन्ट ब्याकग्राउन्डमा अपडेट गर्ने (एडमिनमा मात्र देखिन्छ)
         try {
           await window.fsMethods.updateDoc(docRef, {
             views: window.fsMethods.increment(1)
           });
-          n.views = (n.views || 0) + 1;
-        } catch(e) {}
+        } catch(e) {
+          console.error("Views update error:", e);
+        }
 
-        renderArticle(n);
-        await loadRelatedNews(articleId);
       } else {
         showNotFound();
       }
@@ -366,19 +365,16 @@ window.news = [];
   }
 
   window.handleShare = async function(platform) {
-    if (!n) return;
+    if (!n || !n.id) return;
 
-    if (n.id) {
-      n.shares = (n.shares || 0) + 1;
-      try {
-        const docRef = window.fsMethods.doc(window.firebaseDb, "news", n.id);
-        await window.fsMethods.updateDoc(docRef, { shares: n.shares });
-      } catch (e) {}
-
-      const countEl = document.querySelector('.shares-count');
-      if (countEl) {
-        countEl.innerHTML = `${n.shares}<span>Shares</span>`;
-      }
+    // सेयर काउन्ट ब्याकग्राउन्डमा अपडेट गर्ने
+    try {
+      const docRef = window.fsMethods.doc(window.firebaseDb, "news", n.id);
+      await window.fsMethods.updateDoc(docRef, { 
+        shares: window.fsMethods.increment(1) 
+      });
+    } catch (e) {
+      console.error("Share count update error:", e);
     }
 
     const shareUrl = window.location.href;
@@ -418,7 +414,6 @@ function renderArticle(n) {
   document.getElementById('pageTitle').textContent = (n.title || 'समाचार') + ' | डेली सेलिब्रेटी';
   
   const articleThumb = n.image || placeholderImg;
-  // index.html को ढाँचा अनुसार n.body वा n.content दुवैलाई स्वीकार गर्ने गरी मिलाइएको
   const rawContent = n.body || n.content || n.description || n.text || '';
   const cleanSummary = rawContent.replace(/\[AD\]/g, '').replace(/<[^>]*>?/gm, '').substring(0, 150);
 
@@ -467,14 +462,9 @@ function renderArticle(n) {
       <button class="lang-btn">Read in English</button>
     </div>
 
+    <!-- यहाँबाट युजरले देख्ने गरी भ्युज र सेयर काउन्ट हटाइएको छ (केबल सेयर बटन मात्र राखिएको छ) -->
     <div class="share-stats-row">
-      <div class="shares-box">
-        <div class="shares-count">
-          ${n.shares || 0}
-          <span>Shares</span>
-        </div>
-        <div class="vertical-divider"></div>
-      </div>
+      <div class="share-label">यो समाचार सेयर गर्नुहोस्:</div>
       <div class="social-icons">
         <button onclick="handleShare('fb')" class="soc-btn fb" title="Facebook">
           <svg viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
