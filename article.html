@@ -82,7 +82,6 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
 .em { background: #ea4335; }
 .soc-btn svg { width: 18px; height: 18px; fill: #fff; }
 
-/* मुख्य थम्बनेल फोटो (वार पार / Edge-to-Edge Full Width) */
 .article-img {
   width: calc(100% + 32px);
   margin-left: -16px;
@@ -96,7 +95,6 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
   border-radius: 0;
 }
 
-/* युट्युब भिडियो कन्टेनर (वार पार / Edge-to-Edge Full Width) */
 .youtube-container {
   position: relative;
   width: calc(100% + 32px);
@@ -118,7 +116,6 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
   border: none;
 }
 
-/* अक्षरहरू मोटो (Bold & Heavy) र प्रष्ट देखिने गरी मिलाइएको */
 .article-body{
   font-size: 20px;
   line-height: 1.85;
@@ -255,9 +252,7 @@ function updateRealTimeDate() {
     const dateStr = now.toLocaleDateString('ne-NP', options);
     const timeStr = now.toLocaleTimeString('ne-NP');
     const dateEl = document.getElementById('liveDate');
-    if(dateEl) {
-      dateEl.textContent = `${dateStr} | ${timeStr}`;
-    }
+    if(dateEl) dateEl.textContent = `${dateStr} | ${timeStr}`;
   } catch(e) {
     const dateEl = document.getElementById('liveDate');
     if(dateEl) dateEl.textContent = 'कार्तिक ८, २०८३';
@@ -304,7 +299,7 @@ window.news = [];
   const articleId = urlParams.get('id');
 
   async function initArticlePage() {
-    if (!articleId) {
+    if (!articleId || articleId === 'undefined') {
       showNotFound();
       return;
     }
@@ -312,7 +307,6 @@ window.news = [];
     try {
       await loadAdsFromFirebase();
 
-      // Firebase बाट सिधै समाचार तान्ने
       const docRef = window.fsMethods.doc(window.firebaseDb, "news", articleId);
       const docSnap = await window.fsMethods.getDoc(docRef);
 
@@ -320,11 +314,13 @@ window.news = [];
         n = docSnap.data();
         n.id = docSnap.id;
 
-        // भ्युज (Views) १ बढाउने
-        await window.fsMethods.updateDoc(docRef, {
-          views: window.fsMethods.increment(1)
-        });
-        n.views = (n.views || 0) + 1;
+        // भ्युज (Views) काउन्ट बढाउने
+        try {
+          await window.fsMethods.updateDoc(docRef, {
+            views: window.fsMethods.increment(1)
+          });
+          n.views = (n.views || 0) + 1;
+        } catch(e) {}
 
         renderArticle(n);
         await loadRelatedNews(articleId);
@@ -332,7 +328,7 @@ window.news = [];
         showNotFound();
       }
     } catch (error) {
-      console.error("समाचार लोड गर्दा त्रुटी:", error);
+      console.error("Error loading article:", error);
       showNotFound();
     }
   }
@@ -419,13 +415,14 @@ window.news = [];
 <script>
 function renderArticle(n) {
   if(!n) return;
-  document.getElementById('pageTitle').textContent = n.title + ' | डेली सेलिब्रेटी';
+  document.getElementById('pageTitle').textContent = (n.title || 'समाचार') + ' | डेली सेलिब्रेटी';
   
   const articleThumb = n.image || placeholderImg;
+  // index.html को ढाँचा अनुसार n.body वा n.content दुवैलाई स्वीकार गर्ने गरी मिलाइएको
   const rawContent = n.body || n.content || n.description || n.text || '';
   const cleanSummary = rawContent.replace(/\[AD\]/g, '').replace(/<[^>]*>?/gm, '').substring(0, 150);
 
-  document.getElementById('ogTitle').setAttribute('content', n.title);
+  document.getElementById('ogTitle').setAttribute('content', n.title || '');
   document.getElementById('ogDesc').setAttribute('content', cleanSummary);
   document.getElementById('ogImage').setAttribute('content', articleThumb);
   document.getElementById('ogUrl').setAttribute('content', window.location.href);
@@ -439,7 +436,7 @@ function renderArticle(n) {
     <div class="adsense-container">
       <span class="adsense-label">विज्ञापन</span>
       <div class="adsense-body">
-        ${window.globalAd300 || '[ 300×250 ADVERTISEMENT ]'}
+        ${window.globalAd300 || '[ ADVERTISEMENT ]'}
       </div>
     </div>
   `;
@@ -513,7 +510,7 @@ function renderRelatedNews() {
     <div class="adsense-container">
       <span class="adsense-label">विज्ञापन</span>
       <div class="adsense-body">
-        ${window.globalAd300 || '[ 300×250 ADVERTISEMENT ]'}
+        ${window.globalAd300 || '[ ADVERTISEMENT ]'}
       </div>
     </div>
   `;
