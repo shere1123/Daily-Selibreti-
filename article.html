@@ -53,8 +53,8 @@ a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}b
 .nav-inner a:hover,.nav-inner a.active{background:#f7f7f7;color:var(--red)}
 
 /* विज्ञापन कन्टेनर */
-.adsense-container {width: 100%;max-width: 900px;margin: 12px auto;text-align: center;background: #fff;border: 1px solid #dedede;border-radius: 5px;padding: 8px;overflow: hidden;position: relative;}
-.adsense-label {font-size: 9px;color: #999;letter-spacing: 0.5px;margin-bottom: 4px;text-transform: uppercase;display: block;text-align: left;}
+.adsense-container {width: 100%;max-width: 900px;margin: 14px auto;text-align: center;background: #fff;border: 1px solid #dedede;border-radius: 5px;padding: 10px 12px 12px;overflow: hidden;position: relative;}
+.adsense-label {font-size: 10px;color: #777;letter-spacing: 0.5px;margin-bottom: 6px;text-transform: uppercase;display: block;text-align: left;font-weight: 700;}
 .adsense-body {width: 100%; display: flex; align-items: center; justify-content: center; overflow: hidden;}
 .adsense-body iframe, .adsense-body img, .adsense-body ins { max-width: 100% !important; height: auto !important; display: block !important; margin: 0 auto; }
 .in-article-ad {margin: 15px 0; text-align: center;}
@@ -130,18 +130,40 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
 .article-body mark { background-color: #fff3cd; padding: 2px 4px; border-radius: 3px; }
 
 .related-title {font-size: 22px; font-weight: 700; color: var(--red); border-bottom: 2px solid var(--red); padding-bottom: 6px; margin: 35px 0 20px;}
-#relatedNewsGrid {display: grid; grid-template-columns: 1fr; gap: 20px;}
+#relatedNewsGrid {display: grid; grid-template-columns: 1fr; gap: 14px;}
 
-.news-card{border:1px solid #dedede;border-radius:5px;padding:22px;box-shadow:none;text-align:center;background:#fff;overflow:hidden;cursor:pointer;}
+.news-card{border:1px solid #dedede;border-radius:5px;padding:20px 20px 18px;box-shadow:none;text-align:center;background:#fff;overflow:hidden;cursor:pointer;transition:transform .15s; margin-bottom: 12px;}
+.news-card:hover{transform:translateY(-3px)}
 .news-card img{width:100%;aspect-ratio:1.65;object-fit:cover;border-radius:4px;margin-top:15px}
-.news-card .news-copy h3{font-size:clamp(20px,3.8vw,26px);font-weight:600;line-height:1.4;margin:0 0 10px;color:#171717}
-.news-card .meta{justify-content:center;font-size:14px;color:var(--red);display:flex;gap:12px;font-weight:600}
+.news-card h3{font-size:clamp(20px,3.8vw,30px);font-weight:500;line-height:1.4;margin:0 0 15px;color:#171717}
+.news-card .meta{justify-content:center;font-size:14px;margin:0 0 18px;color:var(--red);display:flex;gap:12px;flex-wrap:wrap;font-weight:700}
+.news-card .meta span:first-child{display:none}
 
-.compact-news-card{display:flex;gap:16px;align-items:center;border:1px solid #dedede;border-radius:5px;padding:14px 18px;background:#fff;cursor:pointer;}
-.compact-news-card img{width:110px;height:80px;object-fit:cover;border-radius:4px;flex-shrink:0}
+/* तलका २ वटा ठूला बक्सहरूको साइज घटाइएको */
+.news-card.reduced-featured {
+  padding: 14px 16px 12px;
+}
+.news-card.reduced-featured h3 {
+  font-size: clamp(20px, 3.5vw, 26px);
+  font-weight: 700;
+  margin-bottom: 10px;
+}
+.news-card.reduced-featured img {
+  aspect-ratio: 2.2;
+  margin-top: 10px;
+}
+.news-card.reduced-featured .meta {
+  margin-top: 10px;
+  margin-bottom: 0;
+}
+
+.compact-news-card{display:flex;gap:14px;align-items:center;border:1px solid #dedede;border-radius:5px;padding:12px 14px;background:#fff;cursor:pointer;transition:transform .15s,background .15s; margin-bottom: 10px;}
+.compact-news-card:hover{transform:translateY(-2px);background:#fafafa}
+.compact-news-card img{width:100px;height:75px;object-fit:cover;border-radius:4px;flex-shrink:0}
 .compact-news-card .news-copy{text-align:left;flex:1}
-.compact-news-card .news-copy h3{font-size:clamp(16px,2.2vw,18px);font-weight:600;line-height:1.4;margin:0 0 4px;color:#171717}
-.compact-news-card .meta{justify-content:flex-start;font-size:13px;margin:0;color:var(--red);display:flex;gap:12px;font-weight:600}
+.compact-news-card .news-copy h3{font-size:clamp(15px,2.2vw,18px);font-weight:600;line-height:1.4;margin:0 0 6px;color:#171717}
+.compact-news-card .meta{justify-content:flex-start;font-size:12px;margin:0;color:var(--red);display:flex;gap:12px;font-weight:700}
+.compact-news-card .meta span:first-child{display:inline;color:#666;font-weight:400}
 
 .modal{display:none;position:fixed;inset:0;background:#0009;z-index:200;overflow:auto;padding:20px}.modal.show{display:block}.modal-box{background:#fff;max-width:820px;margin:25px auto;padding:20px;position:relative;border-radius:5px}.close{position:absolute;right:12px;top:8px;border:0;background:#eee;border-radius:50%;width:34px;height:34px;font-size:21px}
 .form-group{margin:12px 0}.form-group input{width:100%;padding:10px;border:1px solid #ccc;border-radius:3px}
@@ -272,11 +294,12 @@ function showNotFound() {
 
 let n = null;
 window.news = [];
+window.globalAdsData = {};
 </script>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, increment } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, getDocs, doc, getDoc, updateDoc, increment, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyCqBqz4i7eVYGIcEYA5AAw2OBLgE3Ad0tE",
@@ -293,10 +316,37 @@ window.news = [];
   window.firebaseApp = app;
   window.firebaseDb = db;
   window.fsMethods = { collection, getDocs, doc, getDoc, updateDoc, increment };
-  window.globalAd300 = '';
 
   const urlParams = new URLSearchParams(window.location.search);
   const articleId = urlParams.get('id');
+
+  function setHtmlWithScripts(element, htmlString) {
+    if (!element) return;
+    element.innerHTML = '';
+    if (!htmlString) {
+      element.innerHTML = '[ ADVERTISEMENT ]';
+      return;
+    }
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = htmlString;
+    
+    Array.from(tempDiv.childNodes).forEach(node => {
+      if (node.nodeName === 'SCRIPT') {
+        const script = document.createElement('script');
+        Array.from(node.attributes).forEach(attr => script.setAttribute(attr.name, attr.value));
+        if (node.src) {
+          script.src = node.src;
+        } else {
+          script.textContent = node.textContent;
+        }
+        document.body.appendChild(script);
+        element.appendChild(script);
+      } else {
+        element.appendChild(node.cloneNode(true));
+      }
+    });
+  }
+  window.setHtmlWithScripts = setHtmlWithScripts;
 
   async function initArticlePage() {
     if (!articleId || articleId === 'undefined') {
@@ -305,7 +355,7 @@ window.news = [];
     }
 
     try {
-      await loadAdsFromFirebase();
+      listenAdsFromFirebase();
 
       const docRef = window.fsMethods.doc(window.firebaseDb, "news", articleId);
       const docSnap = await window.fsMethods.getDoc(docRef);
@@ -314,7 +364,6 @@ window.news = [];
         n = docSnap.data();
         n.id = docSnap.id;
 
-        // भ्युज (Views) काउन्ट बढाउने
         try {
           await window.fsMethods.updateDoc(docRef, {
             views: window.fsMethods.increment(1)
@@ -333,18 +382,24 @@ window.news = [];
     }
   }
 
-  async function loadAdsFromFirebase() {
+  function applyAdsData(ads) {
+    window.globalAdsData = ads;
+    if (n) renderArticle(n);
+    renderRelatedNews();
+  }
+
+  function listenAdsFromFirebase() {
     try {
-      const docRef = window.fsMethods.doc(window.firebaseDb, "settings", "ads");
-      const docSnap = await window.fsMethods.getDoc(docRef);
-      if (docSnap.exists()) {
-        const ads = docSnap.data();
-        if(ads.ad300) {
-          window.globalAd300 = ads.ad300;
-          if (n) renderArticle(n);
+      const docRef = doc(db, "settings", "ads");
+      onSnapshot(docRef, (docSnap) => {
+        if (docSnap.exists()) {
+          const ads = docSnap.data();
+          applyAdsData(ads);
         }
-      }
-    } catch (error) {}
+      });
+    } catch (error) {
+      console.log("Firebase विज्ञापन लाइभ सुन्ने असफल:", error);
+    }
   }
 
   async function loadRelatedNews(currentId) {
@@ -413,12 +468,31 @@ window.news = [];
 </script>
 
 <script>
+function getAdBox() {
+  const containerId = 'adBox_' + Math.random().toString(36).substring(2);
+  setTimeout(() => {
+    const el = document.getElementById(containerId);
+    if(el) {
+      const adCode = window.globalAdsData.ad300 || window.globalAdsData.ad728 || window.globalAdsData.banner || '';
+      setHtmlWithScripts(el, adCode);
+    }
+  }, 50);
+
+  return `
+    <div class="adsense-container">
+      <span class="adsense-label">विज्ञापन</span>
+      <div class="adsense-body" id="${containerId}">
+        [ ADVERTISEMENT ]
+      </div>
+    </div>
+  `;
+}
+
 function renderArticle(n) {
   if(!n) return;
   document.getElementById('pageTitle').textContent = (n.title || 'समाचार') + ' | डेली सेलिब्रेटी';
   
   const articleThumb = n.image || placeholderImg;
-  // index.html को ढाँचा अनुसार n.body वा n.content दुवैलाई स्वीकार गर्ने गरी मिलाइएको
   const rawContent = n.body || n.content || n.description || n.text || '';
   const cleanSummary = rawContent.replace(/\[AD\]/g, '').replace(/<[^>]*>?/gm, '').substring(0, 150);
 
@@ -436,7 +510,7 @@ function renderArticle(n) {
     <div class="adsense-container">
       <span class="adsense-label">विज्ञापन</span>
       <div class="adsense-body">
-        ${window.globalAd300 || '[ ADVERTISEMENT ]'}
+        ${window.globalAdsData.ad300 || window.globalAdsData.ad728 || window.globalAdsData.banner || '[ ADVERTISEMENT ]'}
       </div>
     </div>
   `;
@@ -506,30 +580,49 @@ function renderRelatedNews() {
     return;
   }
 
-  const getAdBox = () => `
-    <div class="adsense-container">
-      <span class="adsense-label">विज्ञापन</span>
-      <div class="adsense-body">
-        ${window.globalAd300 || '[ ADVERTISEMENT ]'}
-      </div>
-    </div>
-  `;
-
+  let remainingNews = [...window.news];
   let finalHTML = '';
-  
-  window.news.forEach((item, i) => {
-    let isCompact = (i % 5 >= 2);
 
-    if (!isCompact) {
-      finalHTML += `<article class="news-card" onclick="location.href='article.html?id=${item.id}'">
-        <div class="news-copy"><h3>${safe(item.title)}</h3></div>
-        <img loading="lazy" src="${safe(item.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
-        <div class="meta" style="margin-top:15px;">
+  // १. ३ वटा साना बक्सहरू (Compact Cards)
+  let firstSmall = remainingNews.slice(0, 3);
+  firstSmall.forEach(item => {
+    finalHTML += `<article class="compact-news-card" onclick="location.href='article.html?id=${item.id}'">
+      <img loading="lazy" src="${safe(item.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
+      <div class="news-copy">
+        <h3>${safe(item.title)}</h3>
+        <div class="meta">
           <span>${safe(item.date||'आज')}</span>
           <span>${safe(item.category)}</span>
         </div>
-      </article>`;
-    } else {
+      </div>
+    </article>`;
+  });
+  remainingNews = remainingNews.slice(3);
+
+  // २. विज्ञापन (Ad)
+  finalHTML += getAdBox();
+
+  // ३. २ वटा ठूला बक्सहरू (Reduced Featured)
+  let twoLarge = remainingNews.slice(0, 2);
+  twoLarge.forEach(item => {
+    finalHTML += `<article class="news-card reduced-featured" onclick="location.href='article.html?id=${item.id}'">
+      <div class="news-copy"><h3>${safe(item.title)}</h3></div>
+      <img loading="lazy" src="${safe(item.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
+      <div class="meta">
+        <span>${safe(item.date||'आज')}</span>
+        <span>${safe(item.category)}</span>
+      </div>
+    </article>`;
+  });
+  remainingNews = remainingNews.slice(2);
+
+  // ४. विज्ञापन (Ad)
+  finalHTML += getAdBox();
+
+  // ५. बाँकी समाचारहरूलाई पनि ३ साना र २ ठूलाको क्रममा देखाउने
+  while (remainingNews.length > 0) {
+    let nextSmall = remainingNews.slice(0, 3);
+    nextSmall.forEach(item => {
       finalHTML += `<article class="compact-news-card" onclick="location.href='article.html?id=${item.id}'">
         <img loading="lazy" src="${safe(item.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
         <div class="news-copy">
@@ -540,12 +633,30 @@ function renderRelatedNews() {
           </div>
         </div>
       </article>`;
-    }
+    });
+    remainingNews = remainingNews.slice(3);
 
-    if ((i + 1) % 3 === 0) {
+    if (remainingNews.length > 0) {
       finalHTML += getAdBox();
     }
-  });
+
+    let nextLarge = remainingNews.slice(0, 2);
+    nextLarge.forEach(item => {
+      finalHTML += `<article class="news-card reduced-featured" onclick="location.href='article.html?id=${item.id}'">
+        <div class="news-copy"><h3>${safe(item.title)}</h3></div>
+        <img loading="lazy" src="${safe(item.image || placeholderImg)}" onerror="this.src='${placeholderImg}'" alt="">
+        <div class="meta">
+          <span>${safe(item.date||'आज')}</span>
+          <span>${safe(item.category)}</span>
+        </div>
+      </article>`;
+    });
+    remainingNews = remainingNews.slice(2);
+
+    if (remainingNews.length > 0) {
+      finalHTML += getAdBox();
+    }
+  }
 
   container.innerHTML = finalHTML;
 }
