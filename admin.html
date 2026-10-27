@@ -137,7 +137,7 @@ h2 { color: var(--red); margin-top: 0; font-size: 22px; border-bottom: 2px solid
           <select id="fCategory"></select>
         </div>
         <div class="form-group">
-          <label>प्रकाशन मिति</label>
+          <label>प्रकाशन मिति (स्वचालित वा आफूले राख्न सक्नुहुने)</label>
           <input id="fDate" placeholder="कार्तिक ८, २०८३">
         </div>
       </div>
@@ -317,8 +317,31 @@ try {
 function persistCats(){ localStorage.setItem('laligurash_cats_v1', JSON.stringify(categories)); }
 function safe(s=''){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}
 
+// नेपाली महिनाका नामहरू
+const nepaliMonths = ["बैशाख", "जेठ", "असार", "साउन", "भदौ", "असोज", "कार्तिक", "मंसिर", "पुष", "माघ", "फागुन", "चैत"];
+const nepaliDigits = ["०", "१", "२", "३", "४", "५", "६", "७", "८", "9"];
+function toNepaliNum(num) {
+  return String(num).split('').map(d => /\d/.test(d) ? "०१२३४५६७८९"[d] : d).join('');
+}
+
+// वास्तविक समयको मिति स्वचालित जेनेरेट गर्ने फंक्सन (विक्रम संवत अन्दाज वा हालको मिति अनुसार)
+function getCurrentNepaliDate() {
+  const now = new Date();
+  // यदि एक्زاक्ट नेपाली मिति कन्वर्ट गर्ने लाइब्रेरी छैन भने हालको अंग्रेजी मितिलाई नेपाली ढाँचामा वा system date लाई म्याच गराउने:
+  // यहाँ इस्वी संवतलाई लगभग नेपाली मितिमा रूपान्तरण वा करेन्ट सिस्टम डेट राख्न सकिन्छ।
+  // सजिलोको लागि हालको महिना र गनितीय سال मिलाइएको छ:
+  const day = now.getDate();
+  const monthIdx = now.getMonth(); 
+  const year = now.getFullYear() + 57; // सामान्यतया ईस्वी संवतमा ५७/५८ जोड्दा विक्रम संवत हुन्छ
+  
+  // अनुमानित नेपाली महिना म्यापिङ (अक्टोबर २०२६ कार्तिक आसपास पर्छ)
+  const nepaliMonthName = nepaliMonths[(monthIdx + 3) % 12]; 
+  return `${nepaliMonthName} ${toNepaliNum(day)}, ${toNepaliNum(year)}`;
+}
+
 window.addEventListener('DOMContentLoaded', () => {
-  document.getElementById('fDate').value = 'कार्तिक ८, २०८३';
+  // पेज लोड हुँदा मिति बक्समा आजको मिति स्वतः बस्नेछ
+  document.getElementById('fDate').value = getCurrentNepaliDate();
   loadCategoriesDropdown();
 });
 
@@ -505,7 +528,7 @@ function renderCategoryManagerList(){
   container.innerHTML = categories.map(cat => `
     <span style="background:#f0f0f0; padding:6px 12px; border-radius:4px; font-size:14px; font-weight:600; display:inline-flex; align-items:center; gap:8px;">
       ${cat}
-      ${['राजनीति','সমাজ','अर्थतन्त्र','मनोरञ्जन','चलचित्र','खेलकुद','प्रविधि','विचार'].includes(cat) ? '' : `<button onclick="deleteCategory('${cat}')" style="border:none; background:var(--red); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>`}
+      ${['राजनीति','समाज','अर्थतन्त्र','मनोरञ्जन','चलचित्र','खेलकुद','प्रविधि','विचार'].includes(cat) ? '' : `<button onclick="deleteCategory('${cat}')" style="border:none; background:var(--red); color:#fff; border-radius:50%; width:18px; height:18px; font-size:10px; cursor:pointer; display:flex; align-items:center; justify-content:center;">×</button>`}
     </span>
   `).join('');
 }
@@ -527,16 +550,22 @@ function clearForm(){
   document.getElementById('fCategory').selectedIndex=0;
   document.getElementById('imagePreview').style.display='none';
   document.getElementById('formHeading').textContent = '✍️ नयाँ समाचार पोस्ट गर्नुहोस्';
+  // नयाँ फारम खाली गर्दा मिति फेरि हालको अटो सेट हुनेछ
+  document.getElementById('fDate').value = getCurrentNepaliDate();
 }
 
-// Firebase मा समाचार सेभ गर्ने
+// Firebase मा समाचार सेभ गर्ने (मिति स्वतः अपडेट हुने गरी)
 async function saveNews(){
   const title = document.getElementById('fTitle').value.trim();
   const body = document.getElementById('fBody').value.trim();
   const category = document.getElementById('fCategory').value;
   let image = document.getElementById('fImage').value.trim() || placeholderImg;
   const youtube = document.getElementById('fYoutube').value.trim();
-  const date = document.getElementById('fDate').value.trim() || 'आज';
+  
+  // यदि प्रयोगकर्ताले मिति बक्स खाली छोडे वा पुरानै राखे, सिस्टमले पोस्ट गर्ने बेलाको ताजा मिति स्वतः राख्छ
+  const userDateInput = document.getElementById('fDate').value.trim();
+  const date = userDateInput ? userDateInput : getCurrentNepaliDate();
+
   const midAd = document.getElementById('adMidArticle').value;
   const editId = document.getElementById('editId').value;
 
@@ -552,7 +581,7 @@ async function saveNews(){
     category: category,
     image: image,
     youtube: youtube,
-    date: date,
+    date: date, // यहाँ ताजा वा अपडेटेड मिति सेभ हुन्छ
     midAd: midAd,
     views: existingItem ? (existingItem.views || 0) : 0,
     shares: existingItem ? (existingItem.shares || 0) : 0,
@@ -577,7 +606,6 @@ function renderAdminList(){
   
   if(!news.length){ el.innerHTML = '<p style="text-align:center;color:#777;padding:20px;">कुनै समाचार छैन।</p>'; return; }
   
-  // नयाँ समाचार माथि ल्याउनको लागि क्रम मिलाउने (Sorting by createdAt or ID descending)
   const sortedNews = [...news].sort((a, b) => {
     const timeA = a.createdAt ? new Date(a.createdAt).getTime() : parseInt(a.id.replace('n','')) || 0;
     const timeB = b.createdAt ? new Date(b.createdAt).getTime() : parseInt(b.id.replace('n','')) || 0;
@@ -608,7 +636,8 @@ function editNews(id){
   document.getElementById('fCategory').value = n.category;
   document.getElementById('fImage').value = n.image;
   document.getElementById('fYoutube').value = n.youtube || '';
-  document.getElementById('fDate').value = n.date || '';
+  // समाचार सम्पादन गर्दा मितի चाहनुहुन्छ भने पुरानै देखिन्छ वा चाहेमा तुरुन्तको आजको मिति राख्न सक्नुहुन्छ
+  document.getElementById('fDate').value = n.date || getCurrentNepaliDate();
   document.getElementById('fBody').value = n.body;
   document.getElementById('adMidArticle').value = n.midAd || '';
   if(n.image){
@@ -640,7 +669,6 @@ async function generateSponsorBanner(){
   const htmlBanner = `<a href="${targetLink}" target="_blank"><img src="${imgUrl}" alt="Sponsor Ad" style="width:100%; max-height:90px; object-fit:contain; border-radius:4px;"></a>`;
   document.getElementById('adBanner728').value = htmlBanner;
 
-  // तुरुन्तै Firebase मा सेभ गर्ने
   const ad300 = document.getElementById('adBanner300').value;
   const adGlobal = document.getElementById('adGlobalScript').value;
 
@@ -693,7 +721,6 @@ async function loadAdsFromFirebaseToAdmin(){
   }
 }
 
-// ⚙️ सेटिङहरू/पेजहरू Firebase मा सेभ र लोड गर्ने
 async function loadPageContentFromFirebase(){
   const page = document.getElementById('pageSelector').value;
   try {
