@@ -21,7 +21,6 @@
 <style>
 :root{--red:#b5121b;--dark:#191919;--muted:#6c727a;--line:#e7e7e7;--bg:#f4f5f7;--white:#fff}
 *{box-sizing:border-box}
-/* Font-family लाई Noto Sans Devanagari मा हेरफेर गरिएको छ */
 body{margin:0;background:#fff;color:#202124;font-family:'Noto Sans Devanagari', sans-serif;line-height:1.7}
 a{color:inherit;text-decoration:none}button,input,textarea,select{font:inherit}button{cursor:pointer}
 
@@ -83,6 +82,7 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
 .em { background: #ea4335; }
 .soc-btn svg { width: 18px; height: 18px; fill: #fff; }
 
+/* मुख्य तस्बिर पूर्ण वारपार (Edge-to-Edge) फैालाउन मिलाइएको */
 .article-img {
   width: calc(100% + 32px);
   margin-left: -16px;
@@ -117,14 +117,13 @@ main.wrap{width:100%;max-width:900px;margin:15px auto;padding:0 16px 30px;}
   border: none;
 }
 
-/* स्क्रिनसट अनुसार फन्टको साइज, लाइन र लुक मिलाइएको स्टाइल */
 .article-body {
   font-family: 'Noto Sans Devanagari', sans-serif;
   font-size: 21px;
   line-height: 1.7;
   color: #222222;
   text-align: left;
-  font-weight: 700; /* फोटो अनुसार अलि Bold देखिने */
+  font-weight: 700;
   letter-spacing: 0.2px;
   white-space: pre-line;
   padding: 0 4px;
